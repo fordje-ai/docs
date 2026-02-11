@@ -3,11 +3,11 @@
   "theme": "mint",
   "name": "Fordje Connect",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3B82F6",
+    "light": "#2563EB",
+    "dark": "#60A5FA"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
       {
