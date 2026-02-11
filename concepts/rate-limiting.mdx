@@ -1,0 +1,47 @@
+---
+title: "Rate Limiting"
+description: "Default rate limits and how to handle them"
+---
+
+Fordje Connect enforces rate limits per API key to ensure fair usage and platform stability.
+
+## Default limits
+
+| Window | Limit |
+|--------|-------|
+| Per minute | 60 requests |
+| Per hour | 1,000 requests |
+| Per day | 10,000 requests |
+
+## Response headers
+
+Every response includes rate limit headers so you can track your usage:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the current window resets |
+
+## Handling 429 responses
+
+When you exceed a rate limit, the API returns a `429 Too Many Requests` response:
+
+```json
+{
+  "response_type": "error",
+  "description": "Rate limit exceeded.",
+  "error": "RATE_LIMIT_EXCEEDED",
+  "status_code": 429
+}
+```
+
+Check the `X-RateLimit-Reset` header to determine when you can resume requests.
+
+## Best practices
+
+- **Use pagination efficiently** — Request larger page sizes (up to 500) to reduce total requests
+- **Cache responses** — Reference data like trade groups and units of measure change infrequently
+- **Implement backoff** — When receiving a 429, wait until the reset time before retrying
+- **Monitor headers** — Track `X-RateLimit-Remaining` to proactively slow down before hitting limits
+- **Use bulk endpoints** — Prefer `GET /v1/data-points?ahj_ids=1,2,3` over individual AHJ requests

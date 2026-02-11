@@ -1,0 +1,94 @@
+---
+title: "Error Handling"
+description: "Standard error format and error code catalog"
+---
+
+Fordje Connect returns structured error responses with machine-readable error codes for programmatic handling.
+
+## Error response format
+
+All errors follow this structure:
+
+```json
+{
+  "response_type": "error",
+  "description": "Human-readable error summary",
+  "error": "ERROR_CODE",
+  "status_code": 403,
+  "timestamp": "2025-01-15T12:00:00Z"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `response_type` | string | Always `"error"` for error responses |
+| `description` | string | Human-readable explanation of the error |
+| `error` | string | Machine-readable error code (see catalog below) |
+| `status_code` | integer | HTTP status code |
+| `timestamp` | string | UTC timestamp when the error occurred |
+| `details` | array | Optional granular error details |
+
+## Error code catalog
+
+| Error code | HTTP status | Description |
+|------------|-------------|-------------|
+| `AHJ_ACCESS_DENIED` | 403 | Your subscription does not include the requested AHJ(s) |
+| `AHJ_NOT_AVAILABLE` | 403 | The AHJ does not yet have data available |
+| `AHJ_NOT_FOUND` | 404 | The requested AHJ ID does not exist |
+| `COLLECTION_NOT_FOUND` | 404 | The requested collection does not exist or does not belong to your organization |
+| `INVALID_PARAMETER` | 422 | A query parameter or request body field is invalid |
+| `RATE_LIMIT_EXCEEDED` | 429 | You have exceeded the rate limit for your API key |
+| `BACKEND_UNAVAILABLE` | 502 | The upstream data service is temporarily unavailable |
+
+## Example error responses
+
+### 401 Unauthorized — missing or invalid API key
+
+```json
+{
+  "response_type": "error",
+  "description": "Invalid or missing API key",
+  "error": "UNAUTHORIZED",
+  "status_code": 401
+}
+```
+
+### 403 Forbidden — AHJ not in subscription
+
+```json
+{
+  "response_type": "error",
+  "description": "Your subscription does not include access to the requested AHJ(s). Excluded AHJ IDs: 999",
+  "error": "AHJ_ACCESS_DENIED",
+  "status_code": 403
+}
+```
+
+### 422 Unprocessable Entity — invalid parameter
+
+```json
+{
+  "response_type": "error",
+  "description": "Invalid parameter 'page': must be >= 1",
+  "error": "INVALID_PARAMETER",
+  "status_code": 422
+}
+```
+
+### 429 Too Many Requests — rate limit exceeded
+
+```json
+{
+  "response_type": "error",
+  "description": "Rate limit exceeded.",
+  "error": "RATE_LIMIT_EXCEEDED",
+  "status_code": 429
+}
+```
+
+## Best practices
+
+- Always check `response_type` to distinguish success from error responses
+- Use the `error` field for programmatic error handling (not the `description`)
+- Check the `warnings` array on successful responses for partial access information
+- Implement retry logic with backoff for `429` and `502` errors

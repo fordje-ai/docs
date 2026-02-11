@@ -1,0 +1,19 @@
+All list endpoints support pagination with these parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `page` | integer | `1` | Page number (1-indexed) |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+Paginated responses include a `pagination` object:
+
+```json
+{
+  "pagination": {
+    "page": 1,
+    "page_size": 100,
+    "total": 142,
+    "total_pages": 2
+  }
+}
+```

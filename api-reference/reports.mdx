@@ -1,0 +1,109 @@
+---
+title: "Reports"
+description: "Generate comparison matrices and CSV exports"
+---
+
+Report endpoints let you generate ad-hoc comparisons across AHJs and data point types, either as structured JSON or downloadable CSV.
+
+Both endpoints enforce AHJ access control — unauthorized AHJs are excluded with a warning in the matrix response, or silently filtered in the CSV export.
+
+## Generate matrix report
+
+<Snippet file="auth-header.mdx" />
+
+```bash
+POST /v1/reports/matrix
+```
+
+Generates a comparison matrix with AHJs as rows and data point types as columns.
+
+### Request body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ahj_ids` | array of integers | Yes | AHJ IDs to include |
+| `data_point_type_ids` | array of integers | Yes | Data point type IDs to include |
+
+### Example request
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ahj_ids": [1, 2, 3],
+    "data_point_type_ids": [10, 20, 30]
+  }'
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Generated matrix for 3 AHJ(s)",
+  "data": {
+    "rows": [
+      {
+        "ahj": { "id": 1, "name": "City of Los Angeles" },
+        "values": {
+          "10": "Yes",
+          "20": "Annual",
+          "30": "$150.00"
+        }
+      },
+      {
+        "ahj": { "id": 2, "name": "City of Houston" },
+        "values": {
+          "10": "Yes",
+          "20": "Biannual",
+          "30": "$125.00"
+        }
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "AHJ_ACCESS_DENIED",
+      "message": "Your subscription does not include the following AHJs",
+      "excluded_ahj_ids": [3]
+    }
+  ]
+}
+```
+
+---
+
+## Export report as CSV
+
+```bash
+POST /v1/reports/export
+```
+
+Exports data points for specified AHJs and types as a downloadable CSV file. Only authorized AHJs are included.
+
+### Request body
+
+Same as the matrix endpoint.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ahj_ids` | array of integers | Yes | AHJ IDs to include |
+| `data_point_type_ids` | array of integers | Yes | Data point type IDs to include |
+
+### Example request
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/reports/export" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ahj_ids": [1, 2],
+    "data_point_type_ids": [10, 20]
+  }' \
+  -o fordje_report.csv
+```
+
+### Response
+
+Returns a CSV file with `Content-Type: text/csv` and a `Content-Disposition` header with filename `fordje_report.csv`.

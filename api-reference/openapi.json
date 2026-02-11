@@ -1,94 +1,26 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "Fordje Connect API",
+    "description": "Public API gateway for the Fordje platform. Access AHJ data, data points, reports, and collections.",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
   "paths": {
-    "/plants": {
+    "/health": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
+        "tags": [
+          "Health"
         ],
+        "summary": "Health check",
+        "description": "Check if the API is healthy.",
+        "operationId": "health_check_health_get",
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/HealthResponse"
                 }
               }
             }
@@ -96,57 +28,943 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/v1/ahjs": {
+      "get": {
+        "tags": [
+          "AHJs"
+        ],
+        "summary": "List AHJs",
+        "description": "Get a paginated list of AHJs your organization has access to. Optionally filter by state code. Results are scoped to your subscription entitlements.",
+        "operationId": "list_ahjs_v1_ahjs_get",
         "parameters": [
           {
-            "name": "id",
+            "name": "state_codes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated state codes",
+              "examples": [
+                "CA,TX,NY"
+              ],
+              "title": "State Codes"
+            },
+            "description": "Comma-separated state codes"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/ahjs/{ahj_id}": {
+      "get": {
+        "tags": [
+          "AHJs"
+        ],
+        "summary": "Get AHJ detail",
+        "description": "Get full detail for a single AHJ by ID.",
+        "operationId": "get_ahj_v1_ahjs__ahj_id__get",
+        "parameters": [
+          {
+            "name": "ahj_id",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "title": "Ahj Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/v1/ahjs/{ahj_id}/hierarchy": {
+      "get": {
+        "tags": [
+          "AHJs"
+        ],
+        "summary": "Get AHJ hierarchy",
+        "description": "Get the parent jurisdiction chain for an AHJ.",
+        "operationId": "get_ahj_hierarchy_route_v1_ahjs__ahj_id__hierarchy_get",
+        "parameters": [
+          {
+            "name": "ahj_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Ahj Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/data-points": {
+      "get": {
+        "tags": [
+          "Data Points"
+        ],
+        "summary": "List data point values",
+        "description": "Get paginated data point values with optional filtering. Results are scoped to AHJs your organization has access to. If specific ahj_ids are requested, any unauthorized IDs are excluded and a warning is included in the response.",
+        "operationId": "list_data_points_v1_data_points_get",
+        "parameters": [
+          {
+            "name": "ahj_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated AHJ IDs to filter by",
+              "examples": [
+                "1,2,3"
+              ],
+              "title": "Ahj Ids"
+            },
+            "description": "Comma-separated AHJ IDs to filter by"
+          },
+          {
+            "name": "state_codes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated state codes",
+              "examples": [
+                "CA,TX,NY"
+              ],
+              "title": "State Codes"
+            },
+            "description": "Comma-separated state codes"
+          },
+          {
+            "name": "data_point_type_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated data point type IDs",
+              "examples": [
+                "1,2,3"
+              ],
+              "title": "Data Point Type Ids"
+            },
+            "description": "Comma-separated data point type IDs"
+          },
+          {
+            "name": "trade_group_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated trade group IDs",
+              "examples": [
+                "1,2"
+              ],
+              "title": "Trade Group Ids"
+            },
+            "description": "Comma-separated trade group IDs"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/data-points/types": {
+      "get": {
+        "tags": [
+          "Data Points"
+        ],
+        "summary": "List data point types",
+        "description": "Get a list of available data point types. Types are global reference data and not scoped by AHJ access.",
+        "operationId": "list_data_point_types_v1_data_points_types_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade-groups": {
+      "get": {
+        "tags": [
+          "Reference Data"
+        ],
+        "summary": "List trade groups",
+        "description": "Get a paginated list of trade groups. Trade groups classify data point types into professional disciplines.",
+        "operationId": "list_trade_groups_v1_trade_groups_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/units-of-measure": {
+      "get": {
+        "tags": [
+          "Reference Data"
+        ],
+        "summary": "List units of measure",
+        "description": "Get a paginated list of units of measure used for data point values.",
+        "operationId": "list_units_of_measure_v1_units_of_measure_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports/matrix": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Generate matrix comparison report",
+        "description": "Generate a comparison matrix with AHJs as rows and data point types as columns. Only AHJs your organization has access to are included. Unauthorized AHJs are excluded with a warning.",
+        "operationId": "report_matrix_v1_reports_matrix_post",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/ReportRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports/export": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Export report as CSV",
+        "description": "Export data points for specified AHJs and types as a CSV file. Only authorized AHJs are included in the export.",
+        "operationId": "report_export_v1_reports_export_post",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/csv": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collections": {
+      "get": {
+        "tags": [
+          "Collections"
+        ],
+        "summary": "List collections",
+        "description": "List your organization's saved collections with pagination.",
+        "operationId": "list_collections_endpoint_v1_collections_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collections/{collection_id}": {
+      "get": {
+        "tags": [
+          "Collections"
+        ],
+        "summary": "Get collection detail",
+        "description": "Get the full definition of a saved collection.",
+        "operationId": "get_collection_endpoint_v1_collections__collection_id__get",
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collections/{collection_id}/data": {
+      "get": {
+        "tags": [
+          "Collections"
+        ],
+        "summary": "Execute collection",
+        "description": "Execute a collection against specified AHJs. Uses the collection's data point type and trade group filters to fetch matching data points. AHJ access is enforced.",
+        "operationId": "execute_collection_v1_collections__collection_id__data_get",
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          },
+          {
+            "name": "ahj_ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Comma-separated AHJ IDs to query",
+              "examples": [
+                "1,2,3"
+              ],
+              "title": "Ahj Ids"
+            },
+            "description": "Comma-separated AHJ IDs to query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/collections/{collection_id}/export": {
+      "post": {
+        "tags": [
+          "Collections"
+        ],
+        "summary": "Export collection as CSV",
+        "description": "Export a collection's data for specified AHJs as CSV. AHJ access is enforced.",
+        "operationId": "export_collection_v1_collections__collection_id__export_post",
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          },
+          {
+            "name": "ahj_ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Comma-separated AHJ IDs to export",
+              "examples": [
+                "1,2,3"
+              ],
+              "title": "Ahj Ids"
+            },
+            "description": "Comma-separated AHJ IDs to export"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/csv": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
         }
       }
@@ -154,64 +972,231 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
+      "AccessWarning": {
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Warning code",
+            "examples": [
+              "AHJ_ACCESS_DENIED"
+            ]
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "title": "Message",
+            "description": "Human-readable explanation"
+          },
+          "excluded_ahj_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Excluded Ahj Ids",
+            "description": "AHJ IDs that were excluded from results",
+            "examples": [
+              [
+                45,
+                89,
+                112
+              ]
+            ]
           }
-        }
-      }
-    },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "AccessWarning",
+        "description": "Warning about partial data access due to subscription limits."
+      },
+      "BaseResponse": {
+        "properties": {
+          "response_type": {
+            "type": "string",
+            "title": "Response Type",
+            "description": "Response status",
+            "examples": [
+              "success"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Human-readable result description"
+          },
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data",
+            "description": "Response payload"
+          },
+          "warnings": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AccessWarning"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warnings",
+            "description": "Access or data warnings, if any"
+          }
+        },
+        "type": "object",
+        "required": [
+          "response_type",
+          "description"
+        ],
+        "title": "BaseResponse",
+        "description": "Standard response envelope for all Fordje Connect API endpoints."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "healthy"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "environment"
+        ],
+        "title": "HealthResponse",
+        "description": "Health check response."
+      },
+      "ReportRequest": {
+        "properties": {
+          "ahj_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Ahj Ids",
+            "description": "AHJ IDs to include in the report",
+            "examples": [
+              [
+                1,
+                2,
+                3
+              ]
+            ]
+          },
+          "data_point_type_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Data Point Type Ids",
+            "description": "Data point type IDs to include",
+            "examples": [
+              [
+                10,
+                20,
+                30
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "ahj_ids",
+          "data_point_type_ids"
+        ],
+        "title": "ReportRequest",
+        "description": "Request body for report generation."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "AHJs",
+      "description": "Authority Having Jurisdiction data and hierarchy"
+    },
+    {
+      "name": "Data Points",
+      "description": "Data point values and type definitions"
+    },
+    {
+      "name": "Reference Data",
+      "description": "Trade groups and units of measure"
+    },
+    {
+      "name": "Reports",
+      "description": "Ad-hoc comparison reports and CSV exports"
+    },
+    {
+      "name": "Collections",
+      "description": "Saved data pull configurations (read-only, execute, export)"
+    },
+    {
+      "name": "Health",
+      "description": "Service health checks"
+    }
+  ]
 }

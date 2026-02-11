@@ -1,0 +1,45 @@
+---
+title: "Authentication"
+description: "Authenticate requests using your API key"
+---
+
+All Fordje Connect API endpoints require authentication via an API key passed in the `X-API-Key` request header.
+
+## Including your API key
+
+<Snippet file="auth-header.mdx" />
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs" \
+  -H "X-API-Key: your-api-key"
+```
+
+## Error responses
+
+If the API key is missing or invalid, the API returns a `401 Unauthorized` response:
+
+```json
+{
+  "response_type": "error",
+  "description": "Invalid or missing API key",
+  "error": "UNAUTHORIZED",
+  "status_code": 401
+}
+```
+
+## Key management
+
+API keys are managed through your organization's Fordje admin portal. From there you can:
+
+- Create new API keys
+- View existing keys
+- Rotate keys (generates a new key and revokes the old one)
+- Revoke keys that are no longer needed
+
+<Warning>
+  API keys are sensitive credentials. Never expose them in client-side code, public repositories, or logs.
+</Warning>
+
+## Key scoping
+
+Each API key is associated with an organization. The key inherits the organization's AHJ subscription, which determines which AHJs you can access through the API. See [AHJ Access Control](/concepts/ahj-access) for details.

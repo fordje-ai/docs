@@ -1,0 +1,195 @@
+---
+title: "Collections"
+description: "Saved data pull configurations"
+---
+
+Collections are saved configurations of data point types and trade groups that can be executed against any set of AHJs on demand. Collections are managed through the Fordje admin portal and accessed read-only through the API.
+
+## List collections
+
+<Snippet file="auth-header.mdx" />
+
+```bash
+GET /v1/collections
+```
+
+Returns a paginated list of your organization's saved collections.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `page` | integer | `1` | Page number |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 2 collection(s)",
+  "data": {
+    "items": [
+      {
+        "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "organization_id": "org-uuid-here",
+        "name": "Electrical Permits",
+        "description": "Permit requirements for electrical work",
+        "data_point_type_ids": [10, 11, 12],
+        "trade_group_ids": [1],
+        "created_at": "2025-01-01T00:00:00Z",
+        "updated_at": "2025-01-15T12:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 2,
+      "total_pages": 1
+    }
+  }
+}
+```
+
+---
+
+## Get collection detail
+
+```bash
+GET /v1/collections/{collection_id}
+```
+
+Returns the full definition of a saved collection. Returns `404` if the collection doesn't exist or doesn't belong to your organization.
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `collection_id` | UUID | The collection ID |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Collection 'Electrical Permits'",
+  "data": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "organization_id": "org-uuid-here",
+    "name": "Electrical Permits",
+    "description": "Permit requirements for electrical work",
+    "data_point_type_ids": [10, 11, 12],
+    "trade_group_ids": [1],
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-01-15T12:00:00Z"
+  }
+}
+```
+
+---
+
+## Execute collection
+
+```bash
+GET /v1/collections/{collection_id}/data
+```
+
+Executes the collection's saved filters against specified AHJs, returning matching data point values. AHJ access is enforced — unauthorized AHJs are excluded with a warning.
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `collection_id` | UUID | The collection ID |
+
+### Query parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `ahj_ids` | string | **(required)** | Comma-separated AHJ IDs to query |
+| `page` | integer | `1` | Page number |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data?ahj_ids=1,2,3&page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Collection 'Electrical Permits' executed: 6 result(s)",
+  "data": {
+    "collection_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "collection_name": "Electrical Permits",
+    "items": [
+      {
+        "id": 1001,
+        "ahj": { "id": 1, "name": "City of Los Angeles" },
+        "data_point_type": { "id": 10, "name": "Permit Required" },
+        "value": "Yes",
+        "updated_at": "2025-01-10T08:30:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 6,
+      "total_pages": 1
+    }
+  },
+  "warnings": null
+}
+```
+
+---
+
+## Export collection as CSV
+
+```bash
+POST /v1/collections/{collection_id}/export
+```
+
+Exports the collection's data for specified AHJs as a downloadable CSV file.
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `collection_id` | UUID | The collection ID |
+
+### Query parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `ahj_ids` | string | **(required)** | Comma-separated AHJ IDs to export |
+
+### Example request
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/export?ahj_ids=1,2" \
+  -H "X-API-Key: your-api-key" \
+  -o collection_export.csv
+```
+
+### Response
+
+Returns a CSV file with `Content-Type: text/csv` and a `Content-Disposition` header with a filename based on the collection name.
