@@ -1,33 +1,46 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Reference"
+description: "Complete reference for all Fordje Connect endpoints"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Base URL
 
-## Welcome
+```
+https://connect.fordje.com
+```
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+All endpoints are versioned under `/v1/`.
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+<Snippet file="auth-header.mdx" />
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+See [Authentication](/authentication) for details.
+
+## Response format
+
+<Snippet file="response-envelope.mdx" />
+
+## Pagination
+
+<Snippet file="pagination-params.mdx" />
+
+## Endpoints
+
+<CardGroup cols={2}>
+  <Card title="AHJs" icon="building" href="/api-reference/ahjs">
+    List, detail, and hierarchy for Authorities Having Jurisdiction.
+  </Card>
+  <Card title="Data Points" icon="database" href="/api-reference/data-points">
+    Query code data point values and type definitions.
+  </Card>
+  <Card title="Reference Data" icon="book" href="/api-reference/reference-data">
+    Trade groups and units of measure.
+  </Card>
+  <Card title="Reports" icon="chart-bar" href="/api-reference/reports">
+    Comparison matrices and CSV exports.
+  </Card>
+  <Card title="Collections" icon="folder" href="/api-reference/collections">
+    Saved data pull configurations.
+  </Card>
+</CardGroup>

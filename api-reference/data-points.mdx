@@ -1,0 +1,136 @@
+---
+title: "Data Points"
+description: "Query data point values and list available data point types"
+---
+
+Data points represent code requirements tracked by Fordje for each AHJ. Use these endpoints to query values and discover available types.
+
+## List data point values
+
+<Snippet file="auth-header.mdx" />
+
+```bash
+GET /v1/data-points
+```
+
+Returns paginated data point values with optional filtering. Results are scoped to AHJs in your subscription. If you specify `ahj_ids` that include unauthorized AHJs, those are excluded and a warning is returned.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `ahj_ids` | string | — | Comma-separated AHJ IDs to filter by |
+| `state_codes` | string | — | Comma-separated state codes |
+| `data_point_type_ids` | string | — | Comma-separated data point type IDs |
+| `trade_group_ids` | string | — | Comma-separated trade group IDs |
+| `page` | integer | `1` | Page number |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1,2&data_point_type_ids=10,20&page_size=5" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 5 data point(s)",
+  "data": {
+    "items": [
+      {
+        "id": 1001,
+        "ahj": {
+          "id": 1,
+          "name": "City of Los Angeles",
+          "type": "city",
+          "state_code": "CA"
+        },
+        "data_point_type": {
+          "id": 10,
+          "name": "Permit Required",
+          "description": "Whether a permit is required for this work type",
+          "unit_of_measure": "boolean"
+        },
+        "value": "Yes",
+        "updated_at": "2025-01-10T08:30:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 5,
+      "total": 12,
+      "total_pages": 3
+    }
+  },
+  "warnings": [
+    {
+      "code": "AHJ_ACCESS_DENIED",
+      "message": "Your subscription does not include the following AHJs",
+      "excluded_ahj_ids": [999]
+    }
+  ]
+}
+```
+
+<Info>
+  The `warnings` array is only present when some requested AHJ IDs were excluded. See [AHJ Access Control](/concepts/ahj-access) for details.
+</Info>
+
+---
+
+## List data point types
+
+```bash
+GET /v1/data-points/types
+```
+
+Returns a paginated list of available data point type definitions. Types are global reference data and not scoped by AHJ access.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `page` | integer | `1` | Page number |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 5 data point type(s)",
+  "data": {
+    "items": [
+      {
+        "id": 10,
+        "name": "Permit Required",
+        "description": "Whether a permit is required for this work type",
+        "unit_of_measure": "boolean"
+      },
+      {
+        "id": 20,
+        "name": "Inspection Frequency",
+        "description": "How often inspections are required",
+        "unit_of_measure": "text"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 5,
+      "total": 85,
+      "total_pages": 17
+    }
+  }
+}
+```

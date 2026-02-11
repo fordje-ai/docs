@@ -1,0 +1,164 @@
+---
+title: "AHJs"
+description: "Endpoints for listing, retrieving, and exploring AHJ hierarchies"
+---
+
+AHJ (Authority Having Jurisdiction) endpoints let you list the AHJs in your subscription, get detail for a specific AHJ, and explore jurisdiction hierarchies.
+
+## List AHJs
+
+<Snippet file="auth-header.mdx" />
+
+```bash
+GET /v1/ahjs
+```
+
+Returns a paginated list of AHJs your organization has access to. Results are automatically scoped to your subscription.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `state_codes` | string | — | Comma-separated state codes to filter by (e.g. `CA,TX,NY`) |
+| `page` | integer | `1` | Page number (1-indexed) |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs?state_codes=CA,TX&page=1&page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 10 AHJ(s)",
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "name": "City of Los Angeles",
+        "type": "city",
+        "state_code": "CA"
+      },
+      {
+        "id": 2,
+        "name": "City of Houston",
+        "type": "city",
+        "state_code": "TX"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 42,
+      "total_pages": 5
+    }
+  }
+}
+```
+
+---
+
+## Get AHJ detail
+
+```bash
+GET /v1/ahjs/{ahj_id}
+```
+
+Returns full detail for a single AHJ. Returns `403` if the AHJ is not in your subscription.
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `ahj_id` | integer | The AHJ ID |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs/1" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "AHJ 1 detail",
+  "data": {
+    "id": 1,
+    "name": "City of Los Angeles",
+    "type": "city",
+    "state_code": "CA",
+    "state_name": "California",
+    "county": "Los Angeles",
+    "population": 3979576,
+    "lat": 34.0522,
+    "lon": -118.2437,
+    "census_geoid": "0644000"
+  }
+}
+```
+
+---
+
+## Get AHJ hierarchy
+
+```bash
+GET /v1/ahjs/{ahj_id}/hierarchy
+```
+
+Returns the parent jurisdiction chain for an AHJ — its direct parents, all ancestors, and hierarchy depth. Returns `403` if the AHJ is not in your subscription.
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `ahj_id` | integer | The AHJ ID |
+
+### Example request
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs/1/hierarchy" \
+  -H "X-API-Key: your-api-key"
+```
+
+### Example response
+
+```json
+{
+  "response_type": "success",
+  "description": "AHJ 1 hierarchy",
+  "data": {
+    "ahj_id": 1,
+    "parents": [
+      {
+        "id": 100,
+        "name": "Los Angeles County",
+        "type": "county",
+        "state_code": "CA"
+      }
+    ],
+    "ancestors": [
+      {
+        "id": 100,
+        "name": "Los Angeles County",
+        "type": "county",
+        "state_code": "CA"
+      },
+      {
+        "id": 200,
+        "name": "California",
+        "type": "state",
+        "state_code": "CA"
+      }
+    ],
+    "depth": 2
+  }
+}
+```
