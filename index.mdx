@@ -1,15 +1,15 @@
 ---
 title: "Fordje Connect"
-description: "Programmatic access to building code data, organized by jurisdiction — look up, compare, and export code requirements across the AHJs your organization subscribes to."
+description: "Programmatic access to building code, zoning, permitting, licensing, utility interconnection requirements, and other regulatory data across the 30,000+ US jurisdictions."
 ---
 
-Building codes vary across thousands of jurisdictions. Keeping track of which rules apply where is manual, error-prone, and time-consuming. Fordje Connect gives you programmatic access to building code data organized by jurisdiction — so you can look up, compare, and export code requirements across any Authority Having Jurisdiction (AHJ) your organization subscribes to.
+Building codes and other regulatory requirements are different across every one of the over 30,000 US jurisdictions. Keeping track of which rules apply where is manual, error-prone, and time-consuming. Fordje Connect gives you programmatic access to building code, zoning, permitting, licensing, utility interconnection requirements, and other regulatory data organized by jurisdiction — so you can look up, compare, and export requirements across any Authority Having Jurisdiction (AHJ) your organization subscribes to.
 
 ## What you'll find in Fordje
 
 <AccordionGroup>
   <Accordion title="Authorities Having Jurisdiction (AHJs)">
-    AHJs are the cities, counties, and states that write and enforce building codes. Every piece of data in Fordje is tied to a specific AHJ. Your organization subscribes to the AHJs relevant to your work, and Fordje Connect scopes all data to that subscription.
+    AHJs are the cities, counties, states, and utilities that write and enforce building codes, zoning rules, permitting requirements, and interconnection standards. Every piece of data in Fordje is tied to a specific AHJ. Your organization subscribes to the AHJs relevant to your work, and Fordje Connect scopes all data to that subscription.
   </Accordion>
   <Accordion title="Data points">
     Data points are the individual code requirements tracked in Fordje. A data point is a specific question about a jurisdiction's code — like "What is the minimum insulation R-value?" or "Is a permit required for re-roofing?" Each data point has a value that can differ from one AHJ to another.
@@ -24,6 +24,12 @@ Building codes vary across thousands of jurisdictions. Keeping track of which ru
     Trade groups are professional disciplines — like Electrical, Plumbing, or Mechanical — used to organize data points. Filter by trade group to focus on the code requirements relevant to your work.
   </Accordion>
 </AccordionGroup>
+
+## How Fordje handles jurisdictional laddering
+
+Building codes often layer across multiple levels of government. A project in Los Angeles, for example, may need to comply with requirements from the City of Los Angeles, Los Angeles County, and the State of California — each of which can adopt its own codes. Utility interconnection requirements add another layer on top of that.
+
+Fordje resolves this laddering for you behind the scenes. When you pull data points for an AHJ, the values you receive already account for the full chain of parent jurisdictions. You get the complete, resolved answer — no need to manually trace which level of government a requirement comes from.
 
 ## How access works
 
