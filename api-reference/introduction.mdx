@@ -1,7 +1,9 @@
 ---
 title: "API Reference"
-description: "Complete reference for all Fordje Connect endpoints"
+description: "Complete reference for the Fordje Connect public API — authentication, endpoints, response formats, and error handling."
 ---
+
+Fordje Connect is a RESTful API that provides programmatic access to AHJ (Authority Having Jurisdiction) data, code requirement data points, reports, and saved collections. All endpoints return JSON and are versioned under `/v1/`.
 
 ## Base URL
 
@@ -9,38 +11,162 @@ description: "Complete reference for all Fordje Connect endpoints"
 https://connect.fordje.com
 ```
 
-All endpoints are versioned under `/v1/`.
-
 ## Authentication
 
-<Snippet file="auth-header.mdx" />
+Every request to a `/v1/` endpoint must include your API key in the `X-API-Key` header:
 
-See [Authentication](/authentication) for details.
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs" \
+  -H "X-API-Key: your-api-key"
+```
 
-## Response format
-
-<Snippet file="response-envelope.mdx" />
-
-## Pagination
-
-<Snippet file="pagination-params.mdx" />
+API keys are managed through the Fordje platform. See the [Authentication guide](/authentication) for details on key management and security best practices.
 
 ## Endpoints
 
-<CardGroup cols={2}>
-  <Card title="AHJs" icon="building" href="/api-reference/ahjs">
-    List and retrieve details for Authorities Having Jurisdiction.
-  </Card>
-  <Card title="Data Points" icon="database" href="/api-reference/data-points">
-    Query code data point values and type definitions.
-  </Card>
-  <Card title="Reference Data" icon="book" href="/api-reference/reference-data">
-    Trade groups and units of measure.
-  </Card>
-  <Card title="Reports" icon="chart-bar" href="/api-reference/reports">
-    Comparison matrices and CSV exports.
-  </Card>
-  <Card title="Collections" icon="folder" href="/api-reference/collections">
-    Saved data pull configurations.
-  </Card>
-</CardGroup>
+### AHJs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/ahjs` | List AHJs in your subscription |
+| `GET` | `/v1/ahjs/{ahj_id}` | Get full detail for a single AHJ |
+
+### Data Points
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/data-points` | Query data point values with filtering |
+| `GET` | `/v1/data-points/types` | List available data point type definitions |
+
+### Reference Data
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/trade-groups` | List trade groups (e.g. Electrical, Plumbing) |
+| `GET` | `/v1/units-of-measure` | List units of measure for data point values |
+
+### Reports
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/v1/reports/matrix` | Generate an AHJ x data point comparison grid |
+| `POST` | `/v1/reports/export` | Export a comparison report as CSV |
+
+### Collections
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/collections` | List your organization's saved collections |
+| `GET` | `/v1/collections/{collection_id}` | Get a collection's definition |
+| `GET` | `/v1/collections/{collection_id}/data` | Execute a collection against AHJs |
+| `POST` | `/v1/collections/{collection_id}/export` | Export collection results as CSV |
+
+## Response format
+
+All successful responses use a standard envelope:
+
+```json
+{
+  "response_type": "success",
+  "description": "Human-readable result summary",
+  "data": { ... },
+  "warnings": []
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `response_type` | string | `"success"` or `"error"` |
+| `description` | string | Human-readable summary of the result |
+| `data` | object | The response payload |
+| `warnings` | array or null | Access warnings when some requested AHJs were excluded (see below) |
+
+### Pagination
+
+List endpoints return paginated results. Control pagination with `page` and `page_size` query parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `page` | integer | `1` | Page number (1-indexed) |
+| `page_size` | integer | `100` | Items per page (max 500) |
+
+Every paginated response includes a `pagination` object in `data`:
+
+```json
+{
+  "data": {
+    "items": [...],
+    "pagination": {
+      "page": 1,
+      "page_size": 100,
+      "total": 142,
+      "total_pages": 2
+    }
+  }
+}
+```
+
+### Access warnings
+
+When a request includes AHJ IDs that your subscription doesn't cover, the API returns data for the authorized AHJs and includes a `warnings` array:
+
+```json
+{
+  "response_type": "success",
+  "data": { ... },
+  "warnings": [
+    {
+      "code": "AHJ_ACCESS_DENIED",
+      "message": "Your subscription does not include the following AHJs",
+      "excluded_ahj_ids": [45, 89]
+    }
+  ]
+}
+```
+
+Single-AHJ endpoints (`/v1/ahjs/{id}`) return `403` outright if the AHJ isn't in your subscription.
+
+## Error handling
+
+Error responses follow the same envelope with additional fields:
+
+```json
+{
+  "response_type": "error",
+  "description": "Access denied",
+  "error": "AHJ_ACCESS_DENIED",
+  "status_code": 403
+}
+```
+
+### Status codes
+
+| Code | Meaning | When it happens |
+|------|---------|-----------------|
+| `401` | Unauthorized | Missing, invalid, expired, or revoked API key |
+| `403` | Forbidden | AHJ not included in your subscription |
+| `404` | Not found | Resource doesn't exist or doesn't belong to your organization |
+| `422` | Validation error | Invalid request parameters (details in `details` array) |
+| `429` | Rate limited | Too many requests — see Rate Limits below |
+| `500` | Server error | Unexpected internal error |
+| `502` | Bad gateway | Backend service unavailable |
+
+## Rate limits
+
+Requests are rate-limited per API key across three windows:
+
+| Window | Limit |
+|--------|-------|
+| Per minute | 60 |
+| Per hour | 1,000 |
+| Per day | 10,000 |
+
+Every response includes rate limit headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the current window resets |
+
+When the limit is exceeded, the API returns `429 Too Many Requests`. See [Rate Limiting](/concepts/rate-limiting) for strategies on handling limits.

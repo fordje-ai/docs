@@ -70,7 +70,7 @@ Every data point type has a unit of measure that tells you how to interpret the 
 | **Percentage** | Percentage value | `"80"` |
 
 <Tip>
-  Use the `GET /v1/units-of-measure` endpoint to retrieve the full list of units programmatically. See the [reference data API docs](/api-reference/reference-data) for details.
+  Use the `GET /v1/units-of-measure` endpoint to retrieve the full list of units programmatically. See the [reference data API docs](/api-reference/introduction) for details.
 </Tip>
 
 ## Filtering data points
@@ -95,7 +95,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&trade_grou
   Results are always scoped to the AHJs in your subscription. If you filter by a state, you will only see data for the AHJs within that state that your organization has access to. See [AHJs](/concepts/ahjs) for details.
 </Note>
 
-Trade groups classify data point types into professional disciplines like Electrical, Plumbing, Mechanical, Building, and Fire. You can browse the full list with `GET /v1/trade-groups`. See the [reference data docs](/api-reference/reference-data) for more.
+Trade groups classify data point types into professional disciplines like Electrical, Plumbing, Mechanical, Building, and Fire. You can browse the full list with `GET /v1/trade-groups`. See the [reference data docs](/api-reference/introduction) for more.
 
 ## Discovering what is available
 
@@ -184,4 +184,4 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
 
 ## Next steps
 
-See the [Data Points API reference](/api-reference/data-points) for the complete endpoint documentation, including all query parameters, response fields, and pagination options.
+See the [Data Points API reference](/api-reference/introduction) for the complete endpoint documentation, including all query parameters, response fields, and pagination options.

@@ -46,32 +46,51 @@
           },
           {
             "group": "AHJs",
+            "openapi": "api-reference/openapi.json",
             "pages": [
-              "api-reference/ahjs"
+              "GET /v1/ahjs",
+              "GET /v1/ahjs/{ahj_id}"
             ]
           },
           {
-            "group": "Data points",
+            "group": "Data Points",
+            "openapi": "api-reference/openapi.json",
             "pages": [
-              "api-reference/data-points"
+              "GET /v1/data-points",
+              "GET /v1/data-points/types"
             ]
           },
           {
-            "group": "Reference data",
+            "group": "Reference Data",
+            "openapi": "api-reference/openapi.json",
             "pages": [
-              "api-reference/reference-data"
+              "GET /v1/trade-groups",
+              "GET /v1/units-of-measure"
             ]
           },
           {
             "group": "Reports",
+            "openapi": "api-reference/openapi.json",
             "pages": [
-              "api-reference/reports"
+              "POST /v1/reports/matrix",
+              "POST /v1/reports/export"
             ]
           },
           {
             "group": "Collections",
+            "openapi": "api-reference/openapi.json",
             "pages": [
-              "api-reference/collections"
+              "GET /v1/collections",
+              "GET /v1/collections/{collection_id}",
+              "GET /v1/collections/{collection_id}/data",
+              "POST /v1/collections/{collection_id}/export"
+            ]
+          },
+          {
+            "group": "Utility",
+            "openapi": "api-reference/openapi.json",
+            "pages": [
+              "GET /health"
             ]
           }
         ]
@@ -104,6 +123,5 @@
       "cursor",
       "vscode"
     ]
-  },
-  "openapi": "api-reference/openapi.json"
+  }
 }
