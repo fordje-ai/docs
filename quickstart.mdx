@@ -153,6 +153,73 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     </Info>
   </Step>
 
+  <Step title="Pull a curated set with collections">
+    Once you know which data points matter for your workflow, save them as a collection in the Fordje web app. Then execute that collection through the API to pull exactly the data you need — no extra filtering required.
+
+    <CodeGroup>
+
+    ```bash cURL
+    curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data?ahj_ids=1,2,3&page_size=10" \
+      -H "X-API-Key: your-api-key"
+    ```
+
+    ```python Python
+    response = requests.get(
+        "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data",
+        headers={"X-API-Key": "your-api-key"},
+        params={"ahj_ids": "1,2,3", "page_size": 10},
+    )
+    data = response.json()
+    print(data)
+    ```
+
+    ```javascript JavaScript
+    const response = await fetch(
+      "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data?ahj_ids=1,2,3&page_size=10",
+      {
+        headers: { "X-API-Key": "your-api-key" },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    ```
+
+    </CodeGroup>
+
+    You'll receive a response like this:
+
+    ```json
+    {
+      "response_type": "success",
+      "description": "Collection 'Electrical Permits' executed: 6 result(s)",
+      "data": {
+        "collection_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "collection_name": "Electrical Permits",
+        "items": [
+          {
+            "ahj": { "id": 1, "name": "City of Los Angeles" },
+            "data_point_type": { "id": 10, "name": "Permit Required" },
+            "value": "Yes",
+            "updated_at": "2025-01-10T08:30:00Z"
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "page_size": 10,
+          "total": 6,
+          "total_pages": 1
+        }
+      }
+    }
+    ```
+
+    The response includes only the data points defined in the collection, scoped to the AHJs you specified. Use collections to standardize the data you pull across projects — define once, run anywhere.
+
+    <Tip>
+      To see which collections your organization has set up, call `GET /v1/collections`. See the [collections API reference](/api-reference/collections) for details.
+    </Tip>
+  </Step>
+
   <Step title="Compare across jurisdictions">
     One of the most powerful features of Fordje Connect is comparing code requirements across multiple jurisdictions at once. Reports let you build a matrix — jurisdictions on one side, code requirements on the other.
 
