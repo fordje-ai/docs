@@ -149,7 +149,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     Each item pairs an AHJ with a data point type and its value for that jurisdiction.
 
     <Info>
-      You can also filter by `state` (e.g., `state=CA`) or `trade_group_id` to narrow results to a specific discipline like Electrical or Plumbing. See the [data points API reference](/api-reference/data-points) for all available filters.
+      You can also filter by `state` (e.g., `state=CA`) or `trade_group_id` to narrow results to a specific discipline like Electrical or Plumbing. See the [data points API reference](/api-reference/introduction) for all available filters.
     </Info>
   </Step>
 
@@ -216,7 +216,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     The response includes only the data points defined in the collection, scoped to the AHJs you specified. Use collections to standardize the data you pull across projects — define once, run anywhere.
 
     <Tip>
-      To see which collections your organization has set up, call `GET /v1/collections`. See the [collections API reference](/api-reference/collections) for details.
+      To see which collections your organization has set up, call `GET /v1/collections`. See the [collections API reference](/api-reference/introduction) for details.
     </Tip>
   </Step>
 
@@ -306,7 +306,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     Each row is an AHJ, and each key in `values` maps to a data point type ID — giving you a side-by-side comparison of how each jurisdiction handles each code requirement.
 
     <Tip>
-      You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports API reference](/api-reference/reports) for details.
+      You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports API reference](/api-reference/introduction) for details.
     </Tip>
   </Step>
 </Steps>
