@@ -13,7 +13,7 @@
         ],
         "summary": "Health check",
         "description": "Check if the API is healthy.",
-        "operationId": "health_check_health_get",
+        "operationId": "health_check",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -35,7 +35,12 @@
         ],
         "summary": "List AHJs",
         "description": "Get a paginated list of AHJs your organization has access to. Optionally filter by state code. Results are scoped to your subscription entitlements.",
-        "operationId": "list_ahjs_v1_ahjs_get",
+        "operationId": "list_ahjs",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "state_codes",
@@ -84,15 +89,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -102,6 +98,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -126,7 +162,12 @@
         ],
         "summary": "Get AHJ detail",
         "description": "Get full detail for a single AHJ by ID.",
-        "operationId": "get_ahj_v1_ahjs__ahj_id__get",
+        "operationId": "get_ahj",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "ahj_id",
@@ -135,15 +176,6 @@
             "schema": {
               "type": "integer",
               "title": "Ahj Id"
-            }
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
             }
           }
         ],
@@ -158,54 +190,52 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "401": {
+            "description": "Invalid or missing API key",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/v1/ahjs/{ahj_id}/hierarchy": {
-      "get": {
-        "tags": [
-          "AHJs"
-        ],
-        "summary": "Get AHJ hierarchy",
-        "description": "Get the parent jurisdiction chain for an AHJ.",
-        "operationId": "get_ahj_hierarchy_route_v1_ahjs__ahj_id__hierarchy_get",
-        "parameters": [
-          {
-            "name": "ahj_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Ahj Id"
-            }
           },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
+          "403": {
+            "description": "AHJ access denied",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BaseResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -230,7 +260,12 @@
         ],
         "summary": "List data point values",
         "description": "Get paginated data point values with optional filtering. Results are scoped to AHJs your organization has access to. If specific ahj_ids are requested, any unauthorized IDs are excluded and a warning is included in the response.",
-        "operationId": "list_data_points_v1_data_points_get",
+        "operationId": "list_data_points",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "ahj_ids",
@@ -342,15 +377,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -360,6 +386,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -384,7 +450,12 @@
         ],
         "summary": "List data point types",
         "description": "Get a list of available data point types. Types are global reference data and not scoped by AHJ access.",
-        "operationId": "list_data_point_types_v1_data_points_types_get",
+        "operationId": "list_data_point_types",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "page",
@@ -412,15 +483,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -430,6 +492,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -454,7 +556,12 @@
         ],
         "summary": "List trade groups",
         "description": "Get a paginated list of trade groups. Trade groups classify data point types into professional disciplines.",
-        "operationId": "list_trade_groups_v1_trade_groups_get",
+        "operationId": "list_trade_groups",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "page",
@@ -482,15 +589,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -500,6 +598,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -524,7 +662,12 @@
         ],
         "summary": "List units of measure",
         "description": "Get a paginated list of units of measure used for data point values.",
-        "operationId": "list_units_of_measure_v1_units_of_measure_get",
+        "operationId": "list_units_of_measure",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "page",
@@ -552,15 +695,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -570,6 +704,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -594,27 +768,16 @@
         ],
         "summary": "Generate matrix comparison report",
         "description": "Generate a comparison matrix with AHJs as rows and data point types as columns. Only AHJs your organization has access to are included. Unauthorized AHJs are excluded with a warning.",
-        "operationId": "report_matrix_v1_reports_matrix_post",
-        "parameters": [
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
-          }
-        ],
+        "operationId": "generate_report_matrix",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ReportRequest"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -627,53 +790,44 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "401": {
+            "description": "Invalid or missing API key",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/v1/reports/export": {
-      "post": {
-        "tags": [
-          "Reports"
-        ],
-        "summary": "Export report as CSV",
-        "description": "Export data points for specified AHJs and types as a CSV file. Only authorized AHJs are included in the export.",
-        "operationId": "report_export_v1_reports_export_post",
-        "parameters": [
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ReportRequest"
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
+          },
+          "429": {
+            "description": "Rate limit exceeded",
             "content": {
-              "text/csv": {}
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
             }
           },
           "422": {
@@ -686,7 +840,95 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/v1/reports/export": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Export report as CSV",
+        "description": "Export data points for specified AHJs and types as a CSV file. Only authorized AHJs are included in the export.",
+        "operationId": "export_report_csv",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/csv": {}
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
       }
     },
     "/v1/collections": {
@@ -696,7 +938,12 @@
         ],
         "summary": "List collections",
         "description": "List your organization's saved collections with pagination.",
-        "operationId": "list_collections_endpoint_v1_collections_get",
+        "operationId": "list_collections",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "page",
@@ -724,15 +971,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -742,6 +980,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -766,7 +1044,12 @@
         ],
         "summary": "Get collection detail",
         "description": "Get the full definition of a saved collection.",
-        "operationId": "get_collection_endpoint_v1_collections__collection_id__get",
+        "operationId": "get_collection",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "collection_id",
@@ -777,15 +1060,6 @@
               "format": "uuid",
               "title": "Collection Id"
             }
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -795,6 +1069,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -819,7 +1143,12 @@
         ],
         "summary": "Execute collection",
         "description": "Execute a collection against specified AHJs. Uses the collection's data point type and trade group filters to fetch matching data points. AHJ access is enforced.",
-        "operationId": "execute_collection_v1_collections__collection_id__data_get",
+        "operationId": "execute_collection",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "collection_id",
@@ -871,15 +1200,6 @@
               "title": "Page Size"
             },
             "description": "Items per page (max 500)"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -889,6 +1209,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -913,7 +1283,12 @@
         ],
         "summary": "Export collection as CSV",
         "description": "Export a collection's data for specified AHJs as CSV. AHJ access is enforced.",
-        "operationId": "export_collection_v1_collections__collection_id__export_post",
+        "operationId": "export_collection_csv",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "collection_id",
@@ -938,15 +1313,6 @@
               "title": "Ahj Ids"
             },
             "description": "Comma-separated AHJ IDs to export"
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "X-Api-Key"
-            }
           }
         ],
         "responses": {
@@ -954,6 +1320,56 @@
             "description": "Successful Response",
             "content": {
               "text/csv": {}
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
             }
           },
           "422": {
@@ -1060,6 +1476,106 @@
         "title": "BaseResponse",
         "description": "Standard response envelope for all Fordje Connect API endpoints."
       },
+      "ErrorDetail": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorDetail",
+        "description": "Error detail information."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "response_type": {
+            "type": "string",
+            "title": "Response Type",
+            "description": "Always 'error' for error responses",
+            "default": "error"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Human-readable error summary"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Machine-readable error code",
+            "examples": [
+              "AHJ_ACCESS_DENIED"
+            ]
+          },
+          "status_code": {
+            "type": "integer",
+            "title": "Status Code",
+            "description": "HTTP status code",
+            "examples": [
+              400,
+              403,
+              404,
+              429,
+              500
+            ]
+          },
+          "details": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details",
+            "description": "Optional granular error details"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "UTC timestamp when the error occurred"
+          }
+        },
+        "type": "object",
+        "required": [
+          "description",
+          "error",
+          "status_code"
+        ],
+        "title": "ErrorResponse",
+        "description": "Standard error response format.",
+        "example": {
+          "description": "Access denied",
+          "error": "AHJ_ACCESS_DENIED",
+          "response_type": "error",
+          "status_code": 403
+        }
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1078,15 +1594,27 @@
           "status": {
             "type": "string",
             "title": "Status",
-            "default": "healthy"
+            "description": "Service health status",
+            "default": "healthy",
+            "examples": [
+              "healthy"
+            ]
           },
           "version": {
             "type": "string",
-            "title": "Version"
+            "title": "Version",
+            "description": "API version string",
+            "examples": [
+              "0.1.0"
+            ]
           },
           "environment": {
             "type": "string",
-            "title": "Environment"
+            "title": "Environment",
+            "description": "Deployment environment",
+            "examples": [
+              "production"
+            ]
           }
         },
         "type": "object",
@@ -1105,7 +1633,7 @@
             },
             "type": "array",
             "title": "Ahj Ids",
-            "description": "AHJ IDs to include in the report",
+            "description": "AHJ IDs to include",
             "examples": [
               [
                 1,
@@ -1120,7 +1648,7 @@
             },
             "type": "array",
             "title": "Data Point Type Ids",
-            "description": "Data point type IDs to include",
+            "description": "Data point type IDs",
             "examples": [
               [
                 10,
@@ -1171,12 +1699,19 @@
         ],
         "title": "ValidationError"
       }
+    },
+    "securitySchemes": {
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
     }
   },
   "tags": [
     {
       "name": "AHJs",
-      "description": "Authority Having Jurisdiction data and hierarchy"
+      "description": "Authority Having Jurisdiction data"
     },
     {
       "name": "Data Points",
