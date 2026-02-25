@@ -24,7 +24,11 @@
           {
             "group": "Core concepts",
             "pages": [
-              "concepts/ahj-access",
+              "concepts/ahjs",
+              "concepts/data-points",
+              "concepts/collections",
+              "concepts/reports",
+              "concepts/trade-groups",
               "concepts/rate-limiting",
               "concepts/errors"
             ]
