@@ -111,6 +111,43 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
 
     </CodeGroup>
 
+    You'll receive a response like this:
+
+    ```json
+    {
+      "response_type": "success",
+      "description": "Retrieved 5 data point(s)",
+      "data": {
+        "items": [
+          {
+            "ahj": {
+              "id": 1,
+              "name": "City of Los Angeles",
+              "type": "city",
+              "state_code": "CA"
+            },
+            "data_point_type": {
+              "id": 10,
+              "name": "Permit Required",
+              "description": "Whether a permit is required for this work type",
+              "unit_of_measure": "boolean"
+            },
+            "value": "Yes",
+            "updated_at": "2025-01-10T08:30:00Z"
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "page_size": 5,
+          "total": 12,
+          "total_pages": 3
+        }
+      }
+    }
+    ```
+
+    Each item pairs an AHJ with a data point type and its value for that jurisdiction.
+
     <Info>
       You can also filter by `state` (e.g., `state=CA`) or `trade_group_id` to narrow results to a specific discipline like Electrical or Plumbing. See the [data points API reference](/api-reference/data-points) for all available filters.
     </Info>
@@ -170,7 +207,36 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
 
     </CodeGroup>
 
-    The response contains a matrix with one row per AHJ and one column per data point type — giving you a side-by-side comparison of how each jurisdiction handles each code requirement.
+    You'll receive a response like this:
+
+    ```json
+    {
+      "response_type": "success",
+      "description": "Generated matrix for 3 AHJ(s)",
+      "data": {
+        "rows": [
+          {
+            "ahj": { "id": 1, "name": "City of Los Angeles" },
+            "values": {
+              "10": "Yes",
+              "20": "Annual",
+              "30": "$150.00"
+            }
+          },
+          {
+            "ahj": { "id": 2, "name": "City of Houston" },
+            "values": {
+              "10": "Yes",
+              "20": "Biannual",
+              "30": "$125.00"
+            }
+          }
+        ]
+      }
+    }
+    ```
+
+    Each row is an AHJ, and each key in `values` maps to a data point type ID — giving you a side-by-side comparison of how each jurisdiction handles each code requirement.
 
     <Tip>
       You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports API reference](/api-reference/reports) for details.
