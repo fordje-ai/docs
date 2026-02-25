@@ -1,0 +1,125 @@
+---
+title: "Reports"
+description: "Side-by-side comparisons of regulatory requirements across jurisdictions"
+---
+
+When you need to compare regulatory requirements across multiple jurisdictions at once, reports give you a structured, side-by-side view. Instead of querying data points one AHJ at a time and stitching results together yourself, a report generates a comparison matrix in a single request — AHJs on one axis, data point types on the other.
+
+Reports are especially useful when the question is not "what does this one jurisdiction require?" but "how do these jurisdictions differ?" The API returns a matrix where each row is a jurisdiction and each column is a data point type, so you can scan across cities and spot the differences immediately.
+
+## Use cases
+
+Reports are built for scenarios where comparison is the point:
+
+- **Market expansion analysis.** You are evaluating which cities to expand into next. Generate a report comparing permit requirements, fee structures, and inspection schedules across your target markets. Identify the jurisdictions with the lowest barriers to entry before committing resources.
+
+- **Project requirement summaries.** You have active projects in a dozen jurisdictions and need to distribute a unified requirements sheet to your teams. Pull a single report covering all project locations and the data points each team needs, then share the result as a CSV or integrate it into your project management system.
+
+- **Compliance comparison.** Your engineering team needs to understand how building codes differ between jurisdictions for a specific trade. Compare insulation R-values, fire sprinkler thresholds, or electrical permit requirements across every county in a state to identify where your standard designs need modification.
+
+<Tip>
+  If you find yourself running the same comparison repeatedly with the same set of data point types, consider creating a [collection](/concepts/collections) instead. Collections save the data point type configuration so you only need to pass AHJ IDs each time.
+</Tip>
+
+## The matrix format
+
+The matrix report organizes results into rows, one per AHJ. Each row contains a `values` object where the keys are data point type IDs and the values are that jurisdiction's answers.
+
+To generate a matrix, send a POST request with the AHJ IDs and data point type IDs you want to compare:
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ahj_ids": [1, 2, 3],
+    "data_point_type_ids": [10, 20, 30]
+  }'
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "Generated matrix for 3 AHJ(s)",
+  "data": {
+    "rows": [
+      {
+        "ahj": { "id": 1, "name": "City of Los Angeles" },
+        "values": {
+          "10": "Yes",
+          "20": "Annual",
+          "30": "$150.00"
+        }
+      },
+      {
+        "ahj": { "id": 2, "name": "City of Houston" },
+        "values": {
+          "10": "Yes",
+          "20": "Biannual",
+          "30": "$125.00"
+        }
+      }
+    ]
+  }
+}
+```
+
+In this example, data point type `10` might be "Permit Required", `20` might be "Inspection Frequency", and `30` might be "Permit Fee". You can look up the human-readable names for any data point type ID using `GET /v1/data-points/types`. See the [data points concept page](/concepts/data-points) for more on types and values.
+
+<Info>
+  If a jurisdiction does not have a value for a particular data point type, that key will be absent from the `values` object for that row. Your code should handle missing keys rather than assuming every data point type will be present for every AHJ.
+</Info>
+
+## CSV export
+
+For workflows that feed into spreadsheets, compliance trackers, or other tools that consume flat files, you can export the same comparison as a downloadable CSV. The request body is identical to the matrix endpoint:
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/reports/export" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ahj_ids": [1, 2, 3],
+    "data_point_type_ids": [10, 20, 30]
+  }' \
+  -o fordje_report.csv
+```
+
+The response is a CSV file with a `Content-Type: text/csv` header. The `-o` flag saves it directly to a local file. The CSV contains the same data as the matrix response, flattened into rows and columns suitable for import into any spreadsheet application.
+
+<Tip>
+  CSV exports are a good fit for distributing requirement summaries to team members who do not interact with the API directly. Generate the report programmatically on a schedule and share the file through your existing project management tools.
+</Tip>
+
+## AHJ access control
+
+Report endpoints enforce the same access controls as the rest of the API. If you include AHJ IDs that are outside your organization's subscription, the behavior depends on the endpoint:
+
+- **Matrix reports** return data for the AHJs you have access to and include a `warnings` array listing any excluded IDs:
+
+```json
+{
+  "response_type": "success",
+  "description": "Generated matrix for 2 AHJ(s)",
+  "data": {
+    "rows": ["..."]
+  },
+  "warnings": [
+    {
+      "code": "AHJ_ACCESS_DENIED",
+      "message": "Your subscription does not include the following AHJs",
+      "excluded_ahj_ids": [3]
+    }
+  ]
+}
+```
+
+- **CSV exports** silently filter out unauthorized AHJs. The exported file only contains data for jurisdictions in your subscription, with no warning metadata in the file itself.
+
+In both cases, you still get results for every AHJ you are authorized to access. The request does not fail because some IDs were excluded.
+
+See the [AHJs concept page](/concepts/ahjs) for full details on how access scoping works across the API.
+
+## Next steps
+
+See the [Reports API reference](/api-reference/reports) for the complete endpoint documentation, including request body schema, response fields, and error handling details.

@@ -1,9 +1,9 @@
 ---
 title: "AHJs"
-description: "Endpoints for listing, retrieving, and exploring AHJ hierarchies"
+description: "Endpoints for listing and retrieving AHJs"
 ---
 
-AHJ (Authority Having Jurisdiction) endpoints let you list the AHJs in your subscription, get detail for a specific AHJ, and explore jurisdiction hierarchies.
+AHJ (Authority Having Jurisdiction) endpoints let you list the AHJs in your subscription and get detail for a specific AHJ. AHJs include cities, counties, states, and utilities.
 
 ## List AHJs
 
@@ -49,6 +49,12 @@ curl -X GET "https://connect.fordje.com/v1/ahjs?state_codes=CA,TX&page=1&page_si
         "name": "City of Houston",
         "type": "city",
         "state_code": "TX"
+      },
+      {
+        "id": 3,
+        "name": "Pacific Gas & Electric",
+        "type": "utility",
+        "state_code": "CA"
       }
     ],
     "pagination": {
@@ -101,64 +107,6 @@ curl -X GET "https://connect.fordje.com/v1/ahjs/1" \
     "lat": 34.0522,
     "lon": -118.2437,
     "census_geoid": "0644000"
-  }
-}
-```
-
----
-
-## Get AHJ hierarchy
-
-```bash
-GET /v1/ahjs/{ahj_id}/hierarchy
-```
-
-Returns the parent jurisdiction chain for an AHJ — its direct parents, all ancestors, and hierarchy depth. Returns `403` if the AHJ is not in your subscription.
-
-### Path parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `ahj_id` | integer | The AHJ ID |
-
-### Example request
-
-```bash
-curl -X GET "https://connect.fordje.com/v1/ahjs/1/hierarchy" \
-  -H "X-API-Key: your-api-key"
-```
-
-### Example response
-
-```json
-{
-  "response_type": "success",
-  "description": "AHJ 1 hierarchy",
-  "data": {
-    "ahj_id": 1,
-    "parents": [
-      {
-        "id": 100,
-        "name": "Los Angeles County",
-        "type": "county",
-        "state_code": "CA"
-      }
-    ],
-    "ancestors": [
-      {
-        "id": 100,
-        "name": "Los Angeles County",
-        "type": "county",
-        "state_code": "CA"
-      },
-      {
-        "id": 200,
-        "name": "California",
-        "type": "state",
-        "state_code": "CA"
-      }
-    ],
-    "depth": 2
   }
 }
 ```

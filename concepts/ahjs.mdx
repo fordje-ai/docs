@@ -1,0 +1,191 @@
+---
+title: "AHJs"
+description: "Authorities Having Jurisdiction — the cities, counties, states, and utilities that define the regulatory landscape"
+---
+
+Every piece of regulatory data in Fordje is tied to an AHJ — an Authority Having Jurisdiction. AHJs are the government bodies and utilities that write and enforce building codes, zoning rules, permitting requirements, licensing standards, and utility interconnection policies. There are over 30,000 of them across the United States, and they are the core entity in the Fordje data model.
+
+If you are building software that touches construction, energy, permitting, or compliance, AHJs are the reason the rules change from one city to the next. Fordje maps that complexity so you do not have to.
+
+## AHJ types
+
+AHJs fall into four categories, each operating at a different level of the regulatory stack:
+
+| Type | What they govern | Examples |
+|------|-----------------|----------|
+| **City** | Municipal building codes, local permits, zoning ordinances, inspection requirements | City of Los Angeles, City of Houston |
+| **County** | Unincorporated area codes, county-wide fire and safety standards, regional planning rules | Los Angeles County, Harris County |
+| **State** | Statewide building codes, energy codes, licensing requirements, baseline standards that apply everywhere | California, Texas |
+| **Utility** | Interconnection standards, metering requirements, net metering policies, voltage thresholds | Pacific Gas & Electric, Duke Energy |
+
+Every AHJ in the API includes a `type` field so you can distinguish between them programmatically.
+
+## Jurisdictional laddering
+
+Building codes do not come from a single source. They layer across multiple levels of government. A construction project in Los Angeles may need to comply with requirements from the City of Los Angeles, Los Angeles County, and the State of California — plus utility interconnection standards from the local utility provider.
+
+This layering is called jurisdictional laddering. A city often adopts the state's base code and then adds its own amendments. A county may impose additional requirements on top of that. The result is a stack of overlapping rules that vary by location.
+
+Fordje resolves this behind the scenes. When you pull data points for an AHJ, the values already account for the full chain of parent jurisdictions. You get the complete, resolved answer — not a set of fragments you need to piece together yourself.
+
+<Info>
+  You do not need to query multiple AHJ levels and merge the results. Fordje handles jurisdictional laddering internally and returns the effective value for each data point.
+</Info>
+
+## Access scoping
+
+Your API key determines which AHJs you can access. Fordje Connect enforces access control based on your organization's subscription — you only see data for the jurisdictions you are subscribed to.
+
+### How it works
+
+Every API request is scoped to your organization's entitled AHJs:
+
+1. Your API key identifies your organization
+2. The API resolves which AHJ IDs your subscription includes
+3. Requests are filtered to only return data for those AHJs
+
+### Listing endpoints
+
+Endpoints that return lists of data (like `GET /v1/ahjs` or `GET /v1/data-points`) automatically scope results to your entitled AHJs. You only see data you have access to.
+
+### Specific AHJ requests
+
+When you request a specific AHJ by ID (like `GET /v1/ahjs/{id}`), the API checks whether that AHJ is in your subscription. If not, you receive a `403 Forbidden` response:
+
+```json
+{
+  "response_type": "error",
+  "description": "Your subscription does not include access to the requested AHJ(s). Excluded AHJ IDs: 999",
+  "error": "AHJ_ACCESS_DENIED",
+  "status_code": 403
+}
+```
+
+### Partial access with warnings
+
+When you request multiple AHJs in a bulk endpoint (like `GET /v1/data-points?ahj_ids=1,2,999`), the API returns data for the AHJs you have access to and includes a `warnings` array for any excluded IDs:
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 25 data point(s)",
+  "data": {
+    "items": ["..."],
+    "pagination": { "..." : "..." }
+  },
+  "warnings": [
+    {
+      "code": "AHJ_ACCESS_DENIED",
+      "message": "Your subscription does not include the following AHJs",
+      "excluded_ahj_ids": [999]
+    }
+  ]
+}
+```
+
+<Note>
+  The API returns a successful response with partial data rather than failing the entire request. Always check the `warnings` array to detect excluded AHJs.
+</Note>
+
+### Full denial
+
+If **all** requested AHJs are outside your subscription, the API returns a `403` rather than an empty success response.
+
+### Endpoint access behavior
+
+| Endpoint | Access behavior |
+|----------|----------------|
+| `GET /v1/ahjs` | Returns only subscribed AHJs |
+| `GET /v1/ahjs/{id}` | 403 if not subscribed |
+| `GET /v1/data-points` | Filters to subscribed AHJs, warns about excluded |
+| `POST /v1/reports/matrix` | Partial results + warnings |
+| `POST /v1/reports/export` | Filters to subscribed AHJs |
+| `GET /v1/collections/{id}/data` | Partial results + warnings |
+| `POST /v1/collections/{id}/export` | Filters to subscribed AHJs |
+| `GET /v1/data-points/types` | No AHJ scoping (global reference data) |
+| `GET /v1/trade-groups` | No AHJ scoping (global reference data) |
+| `GET /v1/units-of-measure` | No AHJ scoping (global reference data) |
+
+## Working with AHJs
+
+### List your AHJs
+
+To see which AHJs your organization has access to, call the list endpoint. You can filter by state to narrow results:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs?state_codes=CA&page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 10 AHJ(s)",
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "name": "City of Los Angeles",
+        "type": "city",
+        "state_code": "CA"
+      },
+      {
+        "id": 47,
+        "name": "Los Angeles County",
+        "type": "county",
+        "state_code": "CA"
+      },
+      {
+        "id": 112,
+        "name": "Pacific Gas & Electric",
+        "type": "utility",
+        "state_code": "CA"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 38,
+      "total_pages": 4
+    }
+  }
+}
+```
+
+### Get detail for a single AHJ
+
+To retrieve full detail for a specific AHJ, pass its integer ID:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/ahjs/1" \
+  -H "X-API-Key: your-api-key"
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "AHJ 1 detail",
+  "data": {
+    "id": 1,
+    "name": "City of Los Angeles",
+    "type": "city",
+    "state_code": "CA",
+    "state_name": "California",
+    "county": "Los Angeles",
+    "population": 3979576,
+    "lat": 34.0522,
+    "lon": -118.2437,
+    "census_geoid": "0644000"
+  }
+}
+```
+
+The detail response includes geographic and demographic fields like `county`, `population`, `lat`/`lon`, and `census_geoid` that are not present in the list view.
+
+<Warning>
+  AHJ IDs are integers, not UUIDs. Make sure your integration stores and passes them as integer values.
+</Warning>
+
+## Next steps
+
+See the [AHJs API reference](/api-reference/ahjs) for the complete endpoint documentation, including all query parameters, response fields, and filtering options.
