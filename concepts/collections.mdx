@@ -1,0 +1,160 @@
+---
+title: "Collections"
+description: "Saved data pull configurations — define once, run against any set of jurisdictions"
+---
+
+A collection is a saved configuration that defines which data points to pull from the Fordje platform. Think of it as a reusable template — you define the set of questions once, then run it against any group of AHJs on demand.
+
+Collections bundle two things into a named, reusable package:
+
+- **Data point type IDs** — the specific regulatory questions you want answered (e.g., "Is a permit required?", "What is the minimum insulation R-value?")
+- **Trade group IDs** — the trades or disciplines the data points belong to (e.g., electrical, plumbing, solar)
+
+You create collections in the Fordje platform and access them read-only through the API. This separation keeps your integration simple — your code never needs to manage collection definitions, just execute them.
+
+## The workflow
+
+Collections follow a define-once, run-anywhere pattern:
+
+1. **Define a collection in the Fordje platform.** Pick the data point types and trade groups you care about, give it a name and description. For example, you might create an "Electrical Permits" collection that includes data point types for permit requirements, inspection schedules, and fee structures across the electrical trade group.
+
+2. **Execute the collection via the API.** Pass in a set of AHJ IDs and the API returns only the data points that match the collection's filters. You can run the same collection against different AHJs each time — new project in a new city, same collection, fresh results.
+
+3. **Optionally export as CSV.** If your downstream tools (spreadsheets, project management systems, compliance trackers) need a flat file, you can export the collection results as CSV directly from the API.
+
+<Info>
+  Collections are scoped to your organization. You can only see and execute collections that belong to your org, and results are further filtered to AHJs in your subscription. See [AHJ access control](/concepts/ahjs#access-scoping) for details.
+</Info>
+
+## When to use collections vs ad-hoc queries
+
+Both approaches give you access to the same underlying data. The difference is in how you specify what you want.
+
+**Use collections when:**
+- You pull the same set of data points regularly — every new project needs the same permit data, every quarterly audit checks the same compliance fields
+- Multiple team members or systems need to run the same query — the collection acts as a shared definition
+- You want to keep your API calls consistent and avoid drift between integrations
+
+**Use ad-hoc queries when:**
+- You are doing exploratory work — browsing what data is available for a new jurisdiction
+- You need a one-off lookup that does not fit an existing collection
+- You are prototyping and the set of data points you need is still changing
+
+<Tip>
+  Start with ad-hoc queries on `GET /v1/data-points` to explore what is available. Once you know which data point types and trade groups you need repeatedly, create a collection in the Fordje platform and switch your integration to use it.
+</Tip>
+
+## Working with collections
+
+### List your collections
+
+To see all collections your organization has created, call the list endpoint:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 2 collection(s)",
+  "data": {
+    "items": [
+      {
+        "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "organization_id": "org-uuid-here",
+        "name": "Electrical Permits",
+        "description": "Permit requirements for electrical work",
+        "data_point_type_ids": [10, 11, 12],
+        "trade_group_ids": [1],
+        "created_at": "2025-01-01T00:00:00Z",
+        "updated_at": "2025-01-15T12:00:00Z"
+      },
+      {
+        "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "organization_id": "org-uuid-here",
+        "name": "Solar Installation Basics",
+        "description": "Setback, interconnection, and permitting for residential solar",
+        "data_point_type_ids": [20, 21, 22, 23],
+        "trade_group_ids": [3],
+        "created_at": "2025-02-01T00:00:00Z",
+        "updated_at": "2025-02-10T09:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 2,
+      "total_pages": 1
+    }
+  }
+}
+```
+
+The `data_point_type_ids` and `trade_group_ids` fields tell you exactly what filters the collection applies. You can cross-reference these with the [reference data endpoints](/api-reference/reference-data) to see their human-readable names.
+
+### Execute a collection
+
+To run a collection against a set of AHJs, call the data endpoint with the AHJ IDs you want to query:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data?ahj_ids=1,2,3&page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "Collection 'Electrical Permits' executed: 6 result(s)",
+  "data": {
+    "collection_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "collection_name": "Electrical Permits",
+    "items": [
+      {
+        "id": 1001,
+        "ahj": { "id": 1, "name": "City of Los Angeles" },
+        "data_point_type": { "id": 10, "name": "Permit Required" },
+        "value": "Yes",
+        "updated_at": "2025-01-10T08:30:00Z"
+      },
+      {
+        "id": 1002,
+        "ahj": { "id": 2, "name": "City of Houston" },
+        "data_point_type": { "id": 10, "name": "Permit Required" },
+        "value": "Yes",
+        "updated_at": "2025-01-12T14:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 6,
+      "total_pages": 1
+    }
+  },
+  "warnings": null
+}
+```
+
+The response contains the matching data points, each tied to its AHJ and data point type. If any of the AHJ IDs you pass are outside your subscription, you will still get results for the ones you have access to, with a `warnings` array listing the excluded IDs.
+
+### Export as CSV
+
+For workflows that need flat files, you can export a collection's results directly as CSV:
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/export?ahj_ids=1,2" \
+  -H "X-API-Key: your-api-key" \
+  -o electrical_permits_export.csv
+```
+
+The response is a CSV file with a `Content-Type: text/csv` header. The filename in the `Content-Disposition` header is based on the collection name, so saving with `-o` gives you a clean local file for import into spreadsheets or other tools.
+
+<Tip>
+  CSV exports apply the same AHJ access controls as the data endpoint. You only get data for jurisdictions in your subscription.
+</Tip>
+
+## Next steps
+
+See the [Collections API reference](/api-reference/collections) for the complete endpoint documentation, including all query parameters, response fields, and pagination details.

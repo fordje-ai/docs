@@ -1,0 +1,187 @@
+---
+title: "Data Points"
+description: "The individual regulatory requirements tracked for each jurisdiction — the core data in Fordje"
+---
+
+Every jurisdiction in the United States sets its own rules for building codes, permitting, inspections, and utility interconnection. A data point is a single regulatory requirement tracked for a specific AHJ. It answers one question about one jurisdiction's code — and the same question can have a completely different answer from one city to the next.
+
+Data points are the core data in Fordje. When you query the API, you are retrieving data points: the specific, structured answers to regulatory questions across thousands of jurisdictions.
+
+## What a data point looks like in practice
+
+Data points span every discipline that touches construction and energy regulation. Here are some examples of the kinds of questions Fordje tracks:
+
+| Example question | Discipline | Format |
+|-----------------|------------|--------|
+| Is a permit required for re-roofing? | Building | Boolean |
+| Minimum insulation R-value | Building | Numeric |
+| How often are inspections required? | Building | Text |
+| Utility interconnection voltage threshold | Utility | Numeric |
+| Solar panel setback distance from roof edge | Solar | Numeric |
+| Fire sprinkler requirements for residential construction | Fire | Text |
+| Permit fee for electrical work | Electrical | Currency |
+
+Each of these questions might have a different answer in Los Angeles than it does in Houston, and a different answer again in Phoenix. Fordje tracks all of them so you do not have to.
+
+## Types vs values
+
+Data points have two parts: the **type** and the **value**.
+
+The **type** is the question. "Is a permit required for re-roofing?" is a data point type. Types are global reference data — they are not scoped to any particular AHJ. The full catalog of types is the same regardless of which jurisdictions you are subscribed to.
+
+The **value** is a specific jurisdiction's answer to that question. "Yes" in Los Angeles, "No" in Houston. Values are always tied to an AHJ.
+
+When you query `GET /v1/data-points`, each item in the response includes both the type (nested as `data_point_type`) and the value:
+
+```json
+{
+  "id": 1001,
+  "ahj": {
+    "id": 1,
+    "name": "City of Los Angeles",
+    "type": "city",
+    "state_code": "CA"
+  },
+  "data_point_type": {
+    "id": 10,
+    "name": "Permit Required",
+    "description": "Whether a permit is required for this work type",
+    "unit_of_measure": "boolean"
+  },
+  "value": "Yes",
+  "updated_at": "2025-01-10T08:30:00Z"
+}
+```
+
+<Info>
+  You can browse all available data point types with `GET /v1/data-points/types` without needing to specify any AHJ. This is useful for discovering what questions Fordje tracks before querying specific jurisdictions.
+</Info>
+
+## Units of measure
+
+Every data point type has a unit of measure that tells you how to interpret the value. The API returns the unit on each `data_point_type` object.
+
+| Unit | Description | Example value |
+|------|-------------|---------------|
+| **Boolean** | Yes/No answer | `"Yes"` |
+| **Text** | Free-form text description | `"Annual inspection required for systems over 5kW"` |
+| **Numeric** | Number, often with implied physical units | `"38"` (R-value) |
+| **Currency (USD)** | Dollar amount | `"150.00"` |
+| **Percentage** | Percentage value | `"80"` |
+
+<Tip>
+  Use the `GET /v1/units-of-measure` endpoint to retrieve the full list of units programmatically. See the [reference data API docs](/api-reference/reference-data) for details.
+</Tip>
+
+## Filtering data points
+
+The `GET /v1/data-points` endpoint supports several filters to narrow your query:
+
+| Filter | What it does |
+|--------|-------------|
+| `ahj_ids` | Return data points for specific jurisdictions (comma-separated AHJ IDs) |
+| `state_codes` | Return data points for all AHJs in one or more states (e.g. `CA,TX`) |
+| `data_point_type_ids` | Return values for specific questions only (comma-separated type IDs) |
+| `trade_group_ids` | Return data points belonging to specific professional disciplines (e.g. Electrical, Plumbing) |
+
+You can combine these filters. For example, to get all electrical data points across California:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&trade_group_ids=1" \
+  -H "X-API-Key: your-api-key"
+```
+
+<Note>
+  Results are always scoped to the AHJs in your subscription. If you filter by a state, you will only see data for the AHJs within that state that your organization has access to. See [AHJ Access Control](/concepts/ahj-access) for details.
+</Note>
+
+Trade groups classify data point types into professional disciplines like Electrical, Plumbing, Mechanical, Building, and Fire. You can browse the full list with `GET /v1/trade-groups`. See the [reference data docs](/api-reference/reference-data) for more.
+
+## Discovering what is available
+
+Different AHJs have different sets of data points depending on what Fordje has catalogued for that jurisdiction. Not every jurisdiction will have a value for every data point type.
+
+To see what data points exist for a specific AHJ, filter by its ID:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&page_size=5" \
+  -H "X-API-Key: your-api-key"
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 5 data point(s)",
+  "data": {
+    "items": [
+      {
+        "id": 1001,
+        "ahj": {
+          "id": 1,
+          "name": "City of Los Angeles",
+          "type": "city",
+          "state_code": "CA"
+        },
+        "data_point_type": {
+          "id": 10,
+          "name": "Permit Required",
+          "description": "Whether a permit is required for this work type",
+          "unit_of_measure": "boolean"
+        },
+        "value": "Yes",
+        "updated_at": "2025-01-10T08:30:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 5,
+      "total": 42,
+      "total_pages": 9
+    }
+  }
+}
+```
+
+To browse the global catalog of data point types (the questions, without jurisdiction-specific values):
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
+  -H "X-API-Key: your-api-key"
+```
+
+```json
+{
+  "response_type": "success",
+  "description": "Retrieved 5 data point type(s)",
+  "data": {
+    "items": [
+      {
+        "id": 10,
+        "name": "Permit Required",
+        "description": "Whether a permit is required for this work type",
+        "unit_of_measure": "boolean"
+      },
+      {
+        "id": 20,
+        "name": "Inspection Frequency",
+        "description": "How often inspections are required",
+        "unit_of_measure": "text"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 5,
+      "total": 85,
+      "total_pages": 17
+    }
+  }
+}
+```
+
+<Note>
+  Not seeing a data point you need? Reach out to [support@fordje.com](mailto:support@fordje.com) -- we are always expanding our coverage.
+</Note>
+
+## Next steps
+
+See the [Data Points API reference](/api-reference/data-points) for the complete endpoint documentation, including all query parameters, response fields, and pagination options.
