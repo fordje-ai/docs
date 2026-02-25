@@ -60,13 +60,35 @@ When you request multiple AHJs in a bulk endpoint (like `GET /v1/data-points?ahj
 
 If **all** requested AHJs are outside your subscription, the API returns a `403` rather than an empty success response.
 
+## Discovering available data points
+
+You can see which data points exist for any AHJ in your subscription by calling the data points endpoint filtered to specific jurisdictions:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+This returns the data points that Fordje tracks for that jurisdiction. Examples of data points you might find include:
+
+- Minimum insulation R-value
+- Whether a permit is required for re-roofing
+- Utility interconnection voltage thresholds
+- Fire sprinkler requirements for residential construction
+- Solar panel setback distances
+
+Different AHJs will have different sets of data points depending on what Fordje has catalogued for that jurisdiction. See the [data points API reference](/api-reference/data-points) for all available filters and response details.
+
+<Note>
+  Not seeing a data point you need? Reach out to [support@fordje.com](mailto:support@fordje.com) — we're always expanding our coverage.
+</Note>
+
 ## Which endpoints enforce access
 
 | Endpoint | Access behavior |
 |----------|----------------|
 | `GET /v1/ahjs` | Returns only subscribed AHJs |
 | `GET /v1/ahjs/{id}` | 403 if not subscribed |
-| `GET /v1/ahjs/{id}/hierarchy` | 403 if not subscribed |
 | `GET /v1/data-points` | Filters to subscribed AHJs, warns about excluded |
 | `POST /v1/reports/matrix` | Partial results + warnings |
 | `POST /v1/reports/export` | Filters to subscribed AHJs |
