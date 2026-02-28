@@ -331,7 +331,7 @@
             "description": "Comma-separated data point type IDs"
           },
           {
-            "name": "trade_group_ids",
+            "name": "category_ids",
             "in": "query",
             "required": false,
             "schema": {
@@ -343,13 +343,13 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated trade group IDs",
+              "description": "Comma-separated category IDs",
               "examples": [
                 "1,2"
               ],
-              "title": "Trade Group Ids"
+              "title": "Category Ids"
             },
-            "description": "Comma-separated trade group IDs"
+            "description": "Comma-separated category IDs"
           },
           {
             "name": "page",
@@ -549,14 +549,14 @@
         }
       }
     },
-    "/v1/trade-groups": {
+    "/v1/categories": {
       "get": {
         "tags": [
           "Reference Data"
         ],
-        "summary": "List trade groups",
-        "description": "Get a paginated list of trade groups. Trade groups classify data point types into professional disciplines.",
-        "operationId": "list_trade_groups",
+        "summary": "List categories",
+        "description": "Get a paginated list of categories. Categories classify data point types into professional disciplines.",
+        "operationId": "list_categories",
         "security": [
           {
             "APIKeyHeader": []
@@ -1142,7 +1142,7 @@
           "Collections"
         ],
         "summary": "Execute collection",
-        "description": "Execute a collection against specified AHJs. Uses the collection's data point type and trade group filters to fetch matching data points. AHJ access is enforced.",
+        "description": "Execute a collection against specified AHJs. Uses the collection's data point type and category filters to fetch matching data points. AHJ access is enforced.",
         "operationId": "execute_collection",
         "security": [
           {
@@ -1719,7 +1719,7 @@
     },
     {
       "name": "Reference Data",
-      "description": "Trade groups and units of measure"
+      "description": "Categories and units of measure"
     },
     {
       "name": "Reports",
