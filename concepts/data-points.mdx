@@ -82,12 +82,12 @@ The `GET /v1/data-points` endpoint supports several filters to narrow your query
 | `ahj_ids` | Return data points for specific jurisdictions (comma-separated AHJ IDs) |
 | `state_codes` | Return data points for all AHJs in one or more states (e.g. `CA,TX`) |
 | `data_point_type_ids` | Return values for specific questions only (comma-separated type IDs) |
-| `trade_group_ids` | Return data points belonging to specific professional disciplines (e.g. Electrical, Plumbing) |
+| `category_ids` | Return data points belonging to specific professional disciplines (e.g. Electrical, Plumbing) |
 
 You can combine these filters. For example, to get all electrical data points across California:
 
 ```bash
-curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&trade_group_ids=1" \
+curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&category_ids=1" \
   -H "X-API-Key: your-api-key"
 ```
 
@@ -95,7 +95,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&trade_grou
   Results are always scoped to the AHJs in your subscription. If you filter by a state, you will only see data for the AHJs within that state that your organization has access to. See [AHJs](/concepts/ahjs) for details.
 </Note>
 
-Trade groups classify data point types into professional disciplines like Electrical, Plumbing, Mechanical, Building, and Fire. You can browse the full list with `GET /v1/trade-groups`. See the [reference data docs](/api-reference/introduction) for more.
+Categories classify data point types into professional disciplines like Electrical, Plumbing, Mechanical, Building, and Fire. You can browse the full list with `GET /v1/categories`. See the [reference data docs](/api-reference/introduction) for more.
 
 ## Discovering what is available
 
