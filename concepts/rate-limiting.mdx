@@ -41,7 +41,7 @@ Check the `X-RateLimit-Reset` header to determine when you can resume requests.
 ## Best practices
 
 - **Use pagination efficiently** — Request larger page sizes (up to 500) to reduce total requests
-- **Cache responses** — Reference data like trade groups and units of measure change infrequently
+- **Cache responses** — Reference data like categories and units of measure change infrequently
 - **Implement backoff** — When receiving a 429, wait until the reset time before retrying
 - **Monitor headers** — Track `X-RateLimit-Remaining` to proactively slow down before hitting limits
 - **Use bulk endpoints** — Prefer `GET /v1/data-points?ahj_ids=1,2,3` over individual AHJ requests

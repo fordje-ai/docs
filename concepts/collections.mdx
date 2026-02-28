@@ -8,7 +8,7 @@ A collection is a saved configuration that defines which data points to pull fro
 Collections bundle two things into a named, reusable package:
 
 - **Data point type IDs** — the specific regulatory questions you want answered (e.g., "Is a permit required?", "What is the minimum insulation R-value?")
-- **Trade group IDs** — the trades or disciplines the data points belong to (e.g., electrical, plumbing, solar)
+- **Category IDs** — the trades or disciplines the data points belong to (e.g., electrical, plumbing, solar)
 
 You create collections in the Fordje platform and access them read-only through the API. This separation keeps your integration simple — your code never needs to manage collection definitions, just execute them.
 
@@ -16,7 +16,7 @@ You create collections in the Fordje platform and access them read-only through 
 
 Collections follow a define-once, run-anywhere pattern:
 
-1. **Define a collection in the Fordje platform.** Pick the data point types and trade groups you care about, give it a name and description. For example, you might create an "Electrical Permits" collection that includes data point types for permit requirements, inspection schedules, and fee structures across the electrical trade group.
+1. **Define a collection in the Fordje platform.** Pick the data point types and categories you care about, give it a name and description. For example, you might create an "Electrical Permits" collection that includes data point types for permit requirements, inspection schedules, and fee structures across the electrical category.
 
 2. **Execute the collection via the API.** Pass in a set of AHJ IDs and the API returns only the data points that match the collection's filters. You can run the same collection against different AHJs each time — new project in a new city, same collection, fresh results.
 
@@ -41,7 +41,7 @@ Both approaches give you access to the same underlying data. The difference is i
 - You are prototyping and the set of data points you need is still changing
 
 <Tip>
-  Start with ad-hoc queries on `GET /v1/data-points` to explore what is available. Once you know which data point types and trade groups you need repeatedly, create a collection in the Fordje platform and switch your integration to use it.
+  Start with ad-hoc queries on `GET /v1/data-points` to explore what is available. Once you know which data point types and categories you need repeatedly, create a collection in the Fordje platform and switch your integration to use it.
 </Tip>
 
 ## Working with collections
@@ -67,7 +67,7 @@ curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
         "name": "Electrical Permits",
         "description": "Permit requirements for electrical work",
         "data_point_type_ids": [10, 11, 12],
-        "trade_group_ids": [1],
+        "category_ids": [1],
         "created_at": "2025-01-01T00:00:00Z",
         "updated_at": "2025-01-15T12:00:00Z"
       },
@@ -77,7 +77,7 @@ curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
         "name": "Solar Installation Basics",
         "description": "Setback, interconnection, and permitting for residential solar",
         "data_point_type_ids": [20, 21, 22, 23],
-        "trade_group_ids": [3],
+        "category_ids": [3],
         "created_at": "2025-02-01T00:00:00Z",
         "updated_at": "2025-02-10T09:00:00Z"
       }
@@ -92,7 +92,7 @@ curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
 }
 ```
 
-The `data_point_type_ids` and `trade_group_ids` fields tell you exactly what filters the collection applies. You can cross-reference these with the [reference data endpoints](/api-reference/introduction) to see their human-readable names.
+The `data_point_type_ids` and `category_ids` fields tell you exactly what filters the collection applies. You can cross-reference these with the [reference data endpoints](/api-reference/introduction) to see their human-readable names.
 
 ### Execute a collection
 
