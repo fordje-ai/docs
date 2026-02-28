@@ -149,7 +149,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     Each item pairs an AHJ with a data point type and its value for that jurisdiction.
 
     <Info>
-      You can also filter by `state` (e.g., `state=CA`) or `category_ids` to narrow results to a specific discipline like Electrical or Plumbing. See the [data points API reference](/api-reference/introduction) for all available filters.
+      You can also filter by `state` (e.g., `state=CA`) or `category_ids` to narrow results to a specific topic like Permitting or Inspections. See the [data points API reference](/api-reference/introduction) for all available filters.
     </Info>
   </Step>
 
@@ -191,10 +191,10 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     ```json
     {
       "response_type": "success",
-      "description": "Collection 'Electrical Permits' executed: 6 result(s)",
+      "description": "Collection 'Permitting Requirements' executed: 6 result(s)",
       "data": {
         "collection_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-        "collection_name": "Electrical Permits",
+        "collection_name": "Permitting Requirements",
         "items": [
           {
             "ahj": { "id": 1, "name": "City of Los Angeles" },

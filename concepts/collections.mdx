@@ -8,7 +8,7 @@ A collection is a saved configuration that defines which data points to pull fro
 Collections bundle two things into a named, reusable package:
 
 - **Data point type IDs** — the specific regulatory questions you want answered (e.g., "Is a permit required?", "What is the minimum insulation R-value?")
-- **Category IDs** — the trades or disciplines the data points belong to (e.g., electrical, plumbing, solar)
+- **Category IDs** — the regulatory topics the data points belong to (e.g., Permitting, Inspections, Building Standards)
 
 You create collections in the Fordje platform and access them read-only through the API. This separation keeps your integration simple — your code never needs to manage collection definitions, just execute them.
 
@@ -16,7 +16,7 @@ You create collections in the Fordje platform and access them read-only through 
 
 Collections follow a define-once, run-anywhere pattern:
 
-1. **Define a collection in the Fordje platform.** Pick the data point types and categories you care about, give it a name and description. For example, you might create an "Electrical Permits" collection that includes data point types for permit requirements, inspection schedules, and fee structures across the electrical category.
+1. **Define a collection in the Fordje platform.** Pick the data point types and categories you care about, give it a name and description. For example, you might create a "Permitting Requirements" collection that includes data point types for permit applications, fee schedules, and turnaround times across the Permitting category.
 
 2. **Execute the collection via the API.** Pass in a set of AHJ IDs and the API returns only the data points that match the collection's filters. You can run the same collection against different AHJs each time — new project in a new city, same collection, fresh results.
 
@@ -64,10 +64,10 @@ curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
       {
         "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         "organization_id": "org-uuid-here",
-        "name": "Electrical Permits",
-        "description": "Permit requirements for electrical work",
+        "name": "Permitting Requirements",
+        "description": "Permit applications, fees, and turnaround times",
         "data_point_type_ids": [10, 11, 12],
-        "category_ids": [1],
+        "category_ids": [53],
         "created_at": "2025-01-01T00:00:00Z",
         "updated_at": "2025-01-15T12:00:00Z"
       },
@@ -77,7 +77,7 @@ curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
         "name": "Solar Installation Basics",
         "description": "Setback, interconnection, and permitting for residential solar",
         "data_point_type_ids": [20, 21, 22, 23],
-        "category_ids": [3],
+        "category_ids": [16],
         "created_at": "2025-02-01T00:00:00Z",
         "updated_at": "2025-02-10T09:00:00Z"
       }
@@ -106,10 +106,10 @@ curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-e
 ```json
 {
   "response_type": "success",
-  "description": "Collection 'Electrical Permits' executed: 6 result(s)",
+  "description": "Collection 'Permitting Requirements' executed: 6 result(s)",
   "data": {
     "collection_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "collection_name": "Electrical Permits",
+    "collection_name": "Permitting Requirements",
     "items": [
       {
         "id": 1001,
@@ -146,7 +146,7 @@ For workflows that need flat files, you can export a collection's results direct
 ```bash
 curl -X POST "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/export?ahj_ids=1,2" \
   -H "X-API-Key: your-api-key" \
-  -o electrical_permits_export.csv
+  -o permitting_requirements_export.csv
 ```
 
 The response is a CSV file with a `Content-Type: text/csv` header. The filename in the `Content-Disposition` header is based on the collection name, so saving with `-o` gives you a clean local file for import into spreadsheets or other tools.

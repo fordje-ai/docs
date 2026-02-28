@@ -9,17 +9,17 @@ Data points are the core data in Fordje. When you query the API, you are retriev
 
 ## What a data point looks like in practice
 
-Data points span every discipline that touches construction and energy regulation. Here are some examples of the kinds of questions Fordje tracks:
+Data points span every regulatory topic that touches construction and energy regulation. Here are some examples of the kinds of questions Fordje tracks:
 
-| Example question | Discipline | Format |
-|-----------------|------------|--------|
-| Is a permit required for re-roofing? | Building | Boolean |
-| Minimum insulation R-value | Building | Numeric |
-| How often are inspections required? | Building | Text |
-| Utility interconnection voltage threshold | Utility | Numeric |
-| Solar panel setback distance from roof edge | Solar | Numeric |
-| Fire sprinkler requirements for residential construction | Fire | Text |
-| Permit fee for electrical work | Electrical | Currency |
+| Example question | Category | Format |
+|-----------------|----------|--------|
+| Is a permit required for re-roofing? | Permitting | Boolean |
+| Minimum insulation R-value | Building Standards | Numeric |
+| How often are inspections required? | Inspections | Text |
+| Utility interconnection voltage threshold | Utility & Interconnection | Numeric |
+| Solar panel setback distance from roof edge | Residential Solar - Product | Numeric |
+| Maximum lot coverage percentage | Zoning & Land Use | Numeric |
+| Contractor license requirements | Licensing & Contractor Requirements | Text |
 
 Each of these questions might have a different answer in Los Angeles than it does in Houston, and a different answer again in Phoenix. Fordje tracks all of them so you do not have to.
 
@@ -82,12 +82,12 @@ The `GET /v1/data-points` endpoint supports several filters to narrow your query
 | `ahj_ids` | Return data points for specific jurisdictions (comma-separated AHJ IDs) |
 | `state_codes` | Return data points for all AHJs in one or more states (e.g. `CA,TX`) |
 | `data_point_type_ids` | Return values for specific questions only (comma-separated type IDs) |
-| `category_ids` | Return data points belonging to specific professional disciplines (e.g. Electrical, Plumbing) |
+| `category_ids` | Return data points belonging to specific regulatory topics (e.g. Permitting, Inspections) |
 
-You can combine these filters. For example, to get all electrical data points across California:
+You can combine these filters. For example, to get all permitting data points across California:
 
 ```bash
-curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&category_ids=1" \
+curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&category_ids=53" \
   -H "X-API-Key: your-api-key"
 ```
 
@@ -95,7 +95,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&category_i
   Results are always scoped to the AHJs in your subscription. If you filter by a state, you will only see data for the AHJs within that state that your organization has access to. See [AHJs](/concepts/ahjs) for details.
 </Note>
 
-Categories classify data point types into professional disciplines like Electrical, Plumbing, Mechanical, Building, and Fire. You can browse the full list with `GET /v1/categories`. See the [reference data docs](/api-reference/introduction) for more.
+Categories classify data point types into regulatory topics like Permitting, Inspections, Building Standards, and Zoning & Land Use. You can browse the full list with `GET /v1/categories`. See the [reference data docs](/api-reference/introduction) for more.
 
 ## Discovering what is available
 
