@@ -28,7 +28,7 @@
               "concepts/data-points",
               "concepts/collections",
               "concepts/reports",
-              "concepts/trade-groups",
+              "concepts/categories",
               "concepts/rate-limiting",
               "concepts/errors"
             ]
@@ -64,7 +64,7 @@
             "group": "Reference Data",
             "openapi": "api-reference/openapi.json",
             "pages": [
-              "GET /v1/trade-groups",
+              "GET /v1/categories",
               "GET /v1/units-of-measure"
             ]
           },
