@@ -24,7 +24,7 @@ Use these terms consistently:
 | **data point** | A single regulatory data value for an AHJ | Two words, lowercase. Not "datapoint" or "data-point" |
 | **data point type** | The definition/category of a data point | e.g., "Permit Fee", "Inspection Required" |
 | **collection** | A saved configuration of data point types | Owned by the backend, read-only in Connect |
-| **category** | A classification for data point types | e.g., Electrical, Plumbing, Mechanical |
+| **category** | A regulatory topic that classifies data point types | e.g., Permitting, Inspections, Building Standards |
 | **organization** | The API consumer's company/entity | Not "tenant", "account", or "workspace" |
 | **subscription** | The set of AHJs an organization has purchased access to | Not "entitlements" or "plan" |
 | **API key** | Authentication credential | Passed via `X-API-Key` header. Not "token" or "secret" |

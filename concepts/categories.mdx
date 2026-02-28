@@ -1,38 +1,39 @@
 ---
 title: "Categories"
-description: "Professional disciplines that organize data points — filter to the categories that matter for your work"
+description: "Regulatory topics that organize data points — filter to the categories that matter for your work"
 ---
 
-Categories are professional disciplines that organize data points into logical groupings. Every data point type in Fordje belongs to one or more categories — Electrical, Plumbing, Mechanical, Building, Fire, and others. They give you a way to scope your queries to the discipline you care about, so you are not sifting through thousands of unrelated requirements.
+Categories are regulatory topics that organize data points into logical groupings. Every data point type in Fordje belongs to one or more categories — Permitting, Inspections, Building Standards, Zoning & Land Use, and others. They give you a way to scope your queries to the topic you care about, so you are not sifting through thousands of unrelated requirements.
 
-When you are building an integration around electrical permitting, you do not need plumbing data in your response. Categories let you express that intent directly in the API call.
+When you are building an integration around permitting workflows, you do not need zoning data in your response. Categories let you express that intent directly in the API call.
 
 ## Available categories
 
-Each category contains data point types that fall under that professional discipline. Here are some examples:
+Each category contains data point types that relate to that regulatory topic. Here are some examples:
 
 | Category | Example data points |
 |----------|---------------------|
-| **Electrical** | Permit required for electrical work, panel upgrade requirements, inspection frequency |
-| **Plumbing** | Backflow preventer requirements, water heater permit requirements |
-| **Mechanical** | HVAC permit requirements, duct insulation standards |
-| **Building** | Minimum insulation R-value, fire sprinkler requirements, re-roofing permit requirements |
-| **Fire** | Fire sprinkler requirements, smoke detector standards, fire alarm requirements |
+| **Permitting** | Permit application requirements, fee schedules, turnaround times |
+| **Inspections** | Inspection frequency, required inspection types, scheduling rules |
+| **Building Standards** | Minimum insulation R-value, fire sprinkler requirements, structural load requirements |
+| **Zoning & Land Use** | Setback requirements, lot coverage limits, height restrictions |
+| **Licensing & Contractor Requirements** | Contractor license requirements, bonding requirements, insurance minimums |
+| **HVAC & Mechanical** | HVAC permit requirements, duct insulation standards, equipment efficiency minimums |
 
 <Info>
   This list is not exhaustive. Use the `GET /v1/categories` endpoint to retrieve the full, up-to-date list of categories programmatically.
 </Info>
 
-Note that some data point types appear in more than one category. Fire sprinkler requirements, for example, are relevant to both the Building and Fire disciplines.
+Note that some data point types appear in more than one category. Fire sprinkler requirements, for example, are relevant to both Building Standards and Inspections.
 
 ## How categories help you
 
-Categories solve a practical problem: the Fordje platform tracks a large number of data point types across every discipline. If you query data points for an AHJ without any filtering, you get everything — electrical, plumbing, mechanical, building, fire, and more. For most integrations, that is far more data than you need.
+Categories solve a practical problem: the Fordje platform tracks a large number of data point types across many regulatory topics. If you query data points for an AHJ without any filtering, you get everything — permitting, inspections, building standards, zoning, licensing, and more. For most integrations, that is far more data than you need.
 
-By passing `category_ids` when you query data points, you tell the API to return only the data points that belong to those disciplines. This keeps your responses smaller, your parsing simpler, and your application focused on the requirements that actually matter for the work at hand.
+By passing `category_ids` when you query data points, you tell the API to return only the data points that belong to those topics. This keeps your responses smaller, your parsing simpler, and your application focused on the requirements that actually matter for the work at hand.
 
 <Tip>
-  If you know the exact questions you need, filter by `data_point_type_ids` instead. Categories are best when you want everything within a discipline without having to enumerate individual types.
+  If you know the exact questions you need, filter by `data_point_type_ids` instead. Categories are best when you want everything within a topic without having to enumerate individual types.
 </Tip>
 
 ## Listing categories
@@ -50,17 +51,17 @@ curl -X GET "https://connect.fordje.com/v1/categories?page_size=10" \
   "description": "Retrieved 5 category(ies)",
   "data": {
     "items": [
-      { "id": 1, "name": "Electrical" },
-      { "id": 2, "name": "Plumbing" },
-      { "id": 3, "name": "Mechanical" },
-      { "id": 4, "name": "Building" },
-      { "id": 5, "name": "Fire" }
+      { "id": 53, "name": "Permitting" },
+      { "id": 57, "name": "Building Standards" },
+      { "id": 63, "name": "Inspections" },
+      { "id": 56, "name": "Zoning & Land Use" },
+      { "id": 62, "name": "HVAC & Mechanical" }
     ],
     "pagination": {
       "page": 1,
       "page_size": 10,
-      "total": 8,
-      "total_pages": 1
+      "total": 14,
+      "total_pages": 2
     }
   }
 }
@@ -70,10 +71,10 @@ Each category has an `id` and a `name`. Use the `id` when filtering data points 
 
 ## Filtering data points by category
 
-Pass one or more category IDs to the data points endpoint to narrow your results to a specific discipline. For example, to get electrical data points for a specific AHJ:
+Pass one or more category IDs to the data points endpoint to narrow your results to a specific topic. For example, to get permitting data points for a specific AHJ:
 
 ```bash
-curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&category_ids=1&page_size=5" \
+curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&category_ids=53&page_size=5" \
   -H "X-API-Key: your-api-key"
 ```
 
@@ -94,7 +95,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&category_ids=1&
         "data_point_type": {
           "id": 10,
           "name": "Permit Required",
-          "description": "Whether a permit is required for electrical work",
+          "description": "Whether a permit is required for this work type",
           "unit_of_measure": "boolean"
         },
         "value": "Yes",
@@ -110,11 +111,11 @@ curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&category_ids=1&
         },
         "data_point_type": {
           "id": 14,
-          "name": "Panel Upgrade Requirements",
-          "description": "Requirements for residential electrical panel upgrades",
+          "name": "Permit Turnaround Time",
+          "description": "Typical turnaround time for permit approval",
           "unit_of_measure": "text"
         },
-        "value": "200A minimum for new construction; upgrade permit required",
+        "value": "4-6 weeks for residential; 8-12 weeks for commercial",
         "updated_at": "2025-01-10T08:30:00Z"
       }
     ],
@@ -128,11 +129,11 @@ curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&category_ids=1&
 }
 ```
 
-You can combine `category_ids` with other filters like `state_codes` or `data_point_type_ids` to further narrow results. For example, `category_ids=1,5` returns data points from both the Electrical and Fire disciplines.
+You can combine `category_ids` with other filters like `state_codes` or `data_point_type_ids` to further narrow results. For example, `category_ids=53,63` returns data points from both the Permitting and Inspections categories.
 
 ## Categories in collections
 
-When you create a [collection](/concepts/collections) in the Fordje platform, you can include category IDs as part of its definition. The collection then acts as a reusable filter that automatically scopes data pulls to the disciplines you specified.
+When you create a [collection](/concepts/collections) in the Fordje platform, you can include category IDs as part of its definition. The collection then acts as a reusable filter that automatically scopes data pulls to the topics you specified.
 
 This is useful when your team repeatedly needs the same set of categories across different projects. Instead of passing `category_ids` in every API call, you define the categories once in a collection and execute it against whatever AHJs you need.
 

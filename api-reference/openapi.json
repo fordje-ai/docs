@@ -555,7 +555,7 @@
           "Reference Data"
         ],
         "summary": "List categories",
-        "description": "Get a paginated list of categories. Categories classify data point types into professional disciplines.",
+        "description": "Get a paginated list of categories. Categories classify data point types into regulatory topics.",
         "operationId": "list_categories",
         "security": [
           {
