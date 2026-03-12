@@ -180,7 +180,9 @@ curl -X GET "https://connect.fordje.com/v1/ahjs/1" \
 }
 ```
 
-The detail response includes geographic and demographic fields like `county`, `population`, `lat`/`lon`, and `census_geoid` that are not present in the list view.
+The detail response includes geographic and demographic fields like `county`, `population`, `lat`/`lon`, and `census_geoid` that are not present in the list view. The `census_geoid` is the Census Bureau GEOID (FIPS code) for the jurisdiction, useful for joining with Census data products.
+
+{/* TODO: Verify census_geoid is consistently returned from backend AHJ detail endpoint. The backend model has the field but the Connect typed schema does not yet include it — the raw backend response is passed through. */}
 
 <Warning>
   AHJ IDs are integers, not UUIDs. Make sure your integration stores and passes them as integer values.
@@ -188,4 +190,11 @@ The detail response includes geographic and demographic fields like `county`, `p
 
 ## Next steps
 
-See the [AHJs API reference](/api-reference/introduction) for the complete endpoint documentation, including all query parameters, response fields, and filtering options.
+<CardGroup cols={2}>
+  <Card title="List AHJs" icon="list" href="/api-reference/endpoint/list_ahjs">
+    Full API reference for `GET /v1/ahjs` — query parameters, response fields, and filtering.
+  </Card>
+  <Card title="Get AHJ detail" icon="magnifying-glass" href="/api-reference/endpoint/get_ahj">
+    Full API reference for `GET /v1/ahjs/{ahj_id}` — all response fields including geographic data.
+  </Card>
+</CardGroup>

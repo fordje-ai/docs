@@ -1,0 +1,75 @@
+---
+title: "FAQ"
+description: "Frequently asked questions about Fordje Connect."
+---
+
+## Data coverage
+
+<AccordionGroup>
+  <Accordion title="What AHJ data is available?">
+    Fordje tracks regulatory data for over 30,000 US jurisdictions including cities, counties, states, and utilities. The data covers building codes, zoning rules, permitting requirements, licensing standards, inspection schedules, utility interconnection policies, and more.
+
+    Your organization's subscription determines which AHJs you can access. Call `GET /v1/ahjs` to see your available jurisdictions, and `GET /v1/data-points/types` to browse all available data point types.
+  </Accordion>
+
+  <Accordion title="How often is the data updated?">
+    Fordje continuously monitors regulatory sources and updates data points as jurisdictions publish changes. Update frequency varies by jurisdiction and data type — some data points are reviewed quarterly, others as changes are published.
+
+    Every data point includes an `updated_at` timestamp that reflects when the value was last confirmed or changed by the Fordje research team. Use this field to assess data freshness in your integration.
+  </Accordion>
+
+  <Accordion title="Can I get historical data or change history for data points?">
+    The current API returns the latest value for each data point. Historical change tracking is not yet available as a public API feature. If you need to track changes over time, we recommend polling data points on a regular schedule and storing snapshots in your own system.
+  </Accordion>
+
+  <Accordion title="How do I add more AHJs to my subscription?">
+    AHJ subscriptions are managed through your Fordje account. Contact your organization administrator or email [support@fordje.com](mailto:support@fordje.com) to add jurisdictions to your subscription.
+  </Accordion>
+</AccordionGroup>
+
+## API usage
+
+<AccordionGroup>
+  <Accordion title="Can I create or edit collections via the API?">
+    No. Collections are created and managed through the Fordje platform (admin portal). The API provides read-only access to collections — you can list them, view their definitions, execute them against AHJs, and export results as CSV. This keeps your integration simple and avoids accidental modifications.
+  </Accordion>
+
+  <Accordion title="Can I increase my rate limits?">
+    The default rate limits (60/min, 1,000/hour, 10,000/day) are sufficient for most integrations. If your use case requires higher limits, email [support@fordje.com](mailto:support@fordje.com) with details about your integration pattern and expected request volume.
+  </Accordion>
+
+  <Accordion title="What happens if the backend is temporarily unavailable?">
+    If Fordje Connect cannot reach the upstream data service, you will receive a `502 Bad Gateway` response with the error code `BACKEND_UNAVAILABLE`. This is a transient condition — implement retry logic with exponential backoff to handle it gracefully. See [error handling](/concepts/errors) for code examples.
+  </Accordion>
+
+  <Accordion title="What format are CSV exports in?">
+    CSV exports use standard comma-separated values with a header row. The file encoding is UTF-8. The response includes a `Content-Type: text/csv` header and a `Content-Disposition` header with a suggested filename based on the collection or report name.
+  </Accordion>
+
+  <Accordion title="I'm only getting 100 results — how do I get all of them?">
+    List endpoints are paginated with a default `page_size` of 100. To retrieve all results, loop through pages until `page` reaches `total_pages`. You can increase `page_size` up to 500 to reduce the number of requests. See the [pagination section](/api-reference/introduction#pagination) for details.
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+<AccordionGroup>
+  <Accordion title="Where do I get an API key?">
+    API keys are created through the Fordje platform by your organization administrator. If you do not have access, contact your admin or email [support@fordje.com](mailto:support@fordje.com).
+  </Accordion>
+
+  <Accordion title="Can I use the API from a browser?">
+    Fordje Connect is designed for machine-to-machine (M2M) integrations and does not support CORS. Do not expose your API key in client-side browser code. Instead, make API calls from your backend server and serve the results to your frontend.
+  </Accordion>
+
+  <Accordion title="My API key is returning 401 — what should I check?">
+    Verify that:
+    1. The key is passed in the `X-API-Key` header (not as a query parameter or in the `Authorization` header)
+    2. The key has not been revoked or rotated in the Fordje platform
+    3. There are no extra spaces or newline characters in the key value
+  </Accordion>
+</AccordionGroup>
+
+## Still have a question?
+
+Email [support@fordje.com](mailto:support@fordje.com) and we will get back to you within one business day.

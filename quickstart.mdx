@@ -10,6 +10,12 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
 - You need an API key from your Fordje account. If you don't have one, contact your organization administrator.
 - Your API key determines which Authority Having Jurisdiction (AHJ) records you can access — you'll only see data for jurisdictions your organization subscribes to.
 
+<Info>
+  **Python examples** use the `requests` library — install it with `pip install requests`.
+
+  **JavaScript examples** use top-level `await` and the built-in `fetch` API, which requires an ES module environment. In Node.js 18+, either add `"type": "module"` to your `package.json` or save files with the `.mjs` extension. Alternatively, wrap the code in an `async function`.
+</Info>
+
 <Steps>
   <Step title="See your jurisdictions">
     Let's start by seeing which AHJs your organization has access to.
@@ -89,6 +95,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     ```
 
     ```python Python
+    import requests
+
     response = requests.get(
         "https://connect.fordje.com/v1/data-points",
         headers={"X-API-Key": "your-api-key"},
@@ -149,7 +157,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     Each item pairs an AHJ with a data point type and its value for that jurisdiction.
 
     <Info>
-      You can also filter by `state` (e.g., `state=CA`) or `category_ids` to narrow results to a specific topic like Permitting or Inspections. See the [data points API reference](/api-reference/introduction) for all available filters.
+      You can also filter by `state_codes` (e.g., `state_codes=CA`) or `category_ids` to narrow results to a specific topic like Permitting or Inspections. See the [data points concept page](/concepts/data-points) for all available filters.
     </Info>
   </Step>
 
@@ -164,6 +172,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     ```
 
     ```python Python
+    import requests
+
     response = requests.get(
         "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data",
         headers={"X-API-Key": "your-api-key"},
@@ -216,7 +226,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     The response includes only the data points defined in the collection, scoped to the AHJs you specified. Use collections to standardize the data you pull across projects — define once, run anywhere.
 
     <Tip>
-      To see which collections your organization has set up, call `GET /v1/collections`. See the [collections API reference](/api-reference/introduction) for details.
+      To see which collections your organization has set up, call `GET /v1/collections`. See the [collections concept page](/concepts/collections) for details.
     </Tip>
   </Step>
 
@@ -238,6 +248,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     ```
 
     ```python Python
+    import requests
+
     response = requests.post(
         "https://connect.fordje.com/v1/reports/matrix",
         headers={
@@ -306,7 +318,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     Each row is an AHJ, and each key in `values` maps to a data point type ID — giving you a side-by-side comparison of how each jurisdiction handles each code requirement.
 
     <Tip>
-      You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports API reference](/api-reference/introduction) for details.
+      You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports concept page](/concepts/reports) for details.
     </Tip>
   </Step>
 </Steps>

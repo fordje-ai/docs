@@ -7,7 +7,7 @@
 - Configuration lives in `docs.json`
 - Run `mint dev` to preview locally
 - Run `mint broken-links` to check links
-- The API source code lives in the sibling `fordje-public-api/` directory — consult it for accurate endpoint behavior, schemas, and error codes
+- The API source code lives in the sibling `fordje-connect/` directory — consult it for accurate endpoint behavior, schemas, and error codes
 
 ## Audience
 

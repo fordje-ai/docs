@@ -1,6 +1,6 @@
 ---
 title: "Error Handling"
-description: "Standard error format and error code catalog"
+description: "Standard error format, error code catalog, and handling examples"
 ---
 
 Fordje Connect returns structured error responses with machine-readable error codes for programmatic handling.
@@ -14,8 +14,7 @@ All errors follow this structure:
   "response_type": "error",
   "description": "Human-readable error summary",
   "error": "ERROR_CODE",
-  "status_code": 403,
-  "timestamp": "2025-01-15T12:00:00Z"
+  "status_code": 403
 }
 ```
 
@@ -25,13 +24,13 @@ All errors follow this structure:
 | `description` | string | Human-readable explanation of the error |
 | `error` | string | Machine-readable error code (see catalog below) |
 | `status_code` | integer | HTTP status code |
-| `timestamp` | string | UTC timestamp when the error occurred |
-| `details` | array | Optional granular error details |
+| `details` | array | Optional — present on validation errors with per-field detail |
 
 ## Error code catalog
 
 | Error code | HTTP status | Description |
 |------------|-------------|-------------|
+| `UNAUTHORIZED` | 401 | Missing, invalid, expired, or revoked API key |
 | `AHJ_ACCESS_DENIED` | 403 | Your subscription does not include the requested AHJ(s) |
 | `AHJ_NOT_AVAILABLE` | 403 | The AHJ does not yet have data available |
 | `AHJ_NOT_FOUND` | 404 | The requested AHJ ID does not exist |
@@ -66,6 +65,10 @@ All errors follow this structure:
 
 ### 422 Unprocessable Entity — invalid parameter
 
+There are two forms of 422 errors depending on the source.
+
+**Business validation errors** (raised by Fordje Connect when a parameter value is logically invalid) use a machine-readable error code:
+
 ```json
 {
   "response_type": "error",
@@ -74,6 +77,27 @@ All errors follow this structure:
   "status_code": 422
 }
 ```
+
+**Request validation errors** (raised automatically when the request does not match the expected schema — wrong type, missing required field, etc.) include a `details` array with per-field information:
+
+```json
+{
+  "response_type": "error",
+  "description": "Validation error",
+  "error": "Invalid request parameters",
+  "status_code": 422,
+  "details": [
+    {
+      "field": "query.page",
+      "message": "Input should be a valid integer, unable to parse string as an integer"
+    }
+  ]
+}
+```
+
+<Note>
+  When handling 422 responses programmatically, check for both `"INVALID_PARAMETER"` and `"Invalid request parameters"` in the `error` field. If the `details` array is present, iterate over it for per-field error messages.
+</Note>
 
 ### 429 Too Many Requests — rate limit exceeded
 
@@ -86,9 +110,211 @@ All errors follow this structure:
 }
 ```
 
+## Error handling in practice
+
+Here are code examples showing how to handle errors from Fordje Connect, including retry logic for transient failures.
+
+### Basic error checking
+
+<CodeGroup>
+
+```python Python
+import requests
+import time
+
+API_KEY = "your-api-key"
+BASE_URL = "https://connect.fordje.com"
+
+
+def make_request(url, params=None):
+    """Make a request with basic error handling."""
+    response = requests.get(
+        url,
+        headers={"X-API-Key": API_KEY},
+        params=params,
+    )
+
+    if response.status_code == 200:
+        return response.json()
+
+    error = response.json()
+    error_code = error.get("error")
+
+    if response.status_code == 401:
+        raise Exception("Invalid API key. Check your X-API-Key header.")
+
+    if response.status_code == 403:
+        excluded = error.get("description", "")
+        raise Exception(f"Access denied: {excluded}")
+
+    if response.status_code == 422:
+        details = error.get("details", [])
+        messages = [d["message"] for d in details] if details else [error.get("description")]
+        raise Exception(f"Validation error: {'; '.join(messages)}")
+
+    if response.status_code == 429:
+        reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
+        wait_seconds = max(reset_time - int(time.time()), 1)
+        raise Exception(f"Rate limited. Retry after {wait_seconds} seconds.")
+
+    if response.status_code == 502:
+        raise Exception("Backend unavailable. Retry with backoff.")
+
+    raise Exception(f"Unexpected error {response.status_code}: {error.get('description')}")
+
+
+data = make_request(f"{BASE_URL}/v1/ahjs", {"page": 1, "page_size": 10})
+print(data)
+```
+
+```javascript JavaScript
+// Requires Node.js 18+ or an ES module environment for top-level await
+const API_KEY = "your-api-key";
+const BASE_URL = "https://connect.fordje.com";
+
+async function makeRequest(url, params = {}) {
+  const query = new URLSearchParams(params).toString();
+  const fullUrl = query ? `${url}?${query}` : url;
+
+  const response = await fetch(fullUrl, {
+    headers: { "X-API-Key": API_KEY },
+  });
+
+  const body = await response.json();
+
+  if (response.ok) return body;
+
+  const errorCode = body.error;
+
+  if (response.status === 401) {
+    throw new Error("Invalid API key. Check your X-API-Key header.");
+  }
+  if (response.status === 403) {
+    throw new Error(`Access denied: ${body.description}`);
+  }
+  if (response.status === 422) {
+    const details = body.details || [];
+    const messages = details.length
+      ? details.map((d) => d.message).join("; ")
+      : body.description;
+    throw new Error(`Validation error: ${messages}`);
+  }
+  if (response.status === 429) {
+    const resetTime = parseInt(response.headers.get("X-RateLimit-Reset") || "0");
+    const waitSeconds = Math.max(resetTime - Math.floor(Date.now() / 1000), 1);
+    throw new Error(`Rate limited. Retry after ${waitSeconds} seconds.`);
+  }
+  if (response.status === 502) {
+    throw new Error("Backend unavailable. Retry with backoff.");
+  }
+
+  throw new Error(`Unexpected error ${response.status}: ${body.description}`);
+}
+
+const data = await makeRequest(`${BASE_URL}/v1/ahjs`, { page: 1, page_size: 10 });
+console.log(data);
+```
+
+</CodeGroup>
+
+### Retry with exponential backoff
+
+For transient errors (`429` and `502`), implement retry logic with exponential backoff:
+
+<CodeGroup>
+
+```python Python
+import requests
+import time
+
+API_KEY = "your-api-key"
+BASE_URL = "https://connect.fordje.com"
+
+
+def request_with_retry(url, params=None, max_retries=3):
+    """Make a request with automatic retry for transient errors."""
+    for attempt in range(max_retries + 1):
+        response = requests.get(
+            url,
+            headers={"X-API-Key": API_KEY},
+            params=params,
+        )
+
+        if response.status_code == 200:
+            return response.json()
+
+        # Retry on rate limit or backend unavailable
+        if response.status_code in (429, 502) and attempt < max_retries:
+            if response.status_code == 429:
+                reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
+                wait = max(reset_time - int(time.time()), 1)
+            else:
+                wait = 2 ** attempt  # 1s, 2s, 4s
+
+            print(f"Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+            time.sleep(wait)
+            continue
+
+        # Non-retryable error
+        error = response.json()
+        raise Exception(f"Request failed: {error.get('error')} — {error.get('description')}")
+
+    raise Exception("Max retries exceeded")
+
+
+data = request_with_retry(f"{BASE_URL}/v1/ahjs", {"page": 1, "page_size": 10})
+```
+
+```javascript JavaScript
+// Requires Node.js 18+ or an ES module environment for top-level await
+const API_KEY = "your-api-key";
+const BASE_URL = "https://connect.fordje.com";
+
+async function requestWithRetry(url, params = {}, maxRetries = 3) {
+  const query = new URLSearchParams(params).toString();
+  const fullUrl = query ? `${url}?${query}` : url;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const response = await fetch(fullUrl, {
+      headers: { "X-API-Key": API_KEY },
+    });
+
+    if (response.ok) return await response.json();
+
+    // Retry on rate limit or backend unavailable
+    if ([429, 502].includes(response.status) && attempt < maxRetries) {
+      let wait;
+      if (response.status === 429) {
+        const resetTime = parseInt(response.headers.get("X-RateLimit-Reset") || "0");
+        wait = Math.max(resetTime - Math.floor(Date.now() / 1000), 1);
+      } else {
+        wait = 2 ** attempt; // 1s, 2s, 4s
+      }
+
+      console.log(`Retrying in ${wait}s (attempt ${attempt + 1}/${maxRetries})...`);
+      await new Promise((resolve) => setTimeout(resolve, wait * 1000));
+      continue;
+    }
+
+    // Non-retryable error
+    const error = await response.json();
+    throw new Error(`Request failed: ${error.error} — ${error.description}`);
+  }
+
+  throw new Error("Max retries exceeded");
+}
+
+const data = await requestWithRetry(`${BASE_URL}/v1/ahjs`, { page: 1, page_size: 10 });
+console.log(data);
+```
+
+</CodeGroup>
+
 ## Best practices
 
 - Always check `response_type` to distinguish success from error responses
 - Use the `error` field for programmatic error handling (not the `description`)
 - Check the `warnings` array on successful responses for partial access information
-- Implement retry logic with backoff for `429` and `502` errors
+- Implement retry logic with exponential backoff for `429` and `502` errors
+- For `429` responses, respect the `X-RateLimit-Reset` header to determine when to retry
+- Log the full error response body for debugging — the `description` field provides useful context
