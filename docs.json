@@ -8,6 +8,13 @@
     "dark": "#60A5FA"
   },
   "favicon": "/favicon.ico",
+  "metadata": {
+    "og:title": "Fordje Connect API Documentation",
+    "og:description": "Programmatic access to building code and regulatory data across 30,000+ US jurisdictions.",
+    "og:image": "/logo/fordje-logo.svg",
+    "og:site_name": "Fordje Connect",
+    "twitter:card": "summary_large_image"
+  },
   "navigation": {
     "tabs": [
       {
@@ -18,7 +25,8 @@
             "pages": [
               "index",
               "quickstart",
-              "authentication"
+              "authentication",
+              "support"
             ]
           },
           {
@@ -31,6 +39,12 @@
               "concepts/categories",
               "concepts/rate-limiting",
               "concepts/errors"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/pagination"
             ]
           }
         ]
@@ -94,10 +108,47 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Resources",
+        "groups": [
+          {
+            "group": "Resources",
+            "pages": [
+              "changelog",
+              "versioning",
+              "faq"
+            ]
+          },
+          {
+            "group": "Legal",
+            "pages": [
+              {
+                "title": "Terms of Service",
+                "href": "https://fordje.com/terms"
+              },
+              {
+                "title": "Privacy Policy",
+                "href": "https://fordje.com/privacy"
+              }
+            ]
+          }
+        ]
       }
     ],
     "global": {
-      "anchors": []
+      "anchors": [
+        {
+          "anchor": "API Reference",
+          "icon": "code",
+          "href": "/api-reference/introduction"
+        },
+        {
+          "anchor": "Changelog",
+          "icon": "clock-rotate-left",
+          "href": "/changelog"
+        }
+      ]
     }
   },
   "logo": {
@@ -109,6 +160,36 @@
       {
         "label": "Support",
         "href": "mailto:support@fordje.com"
+      }
+    ]
+  },
+  "footer": {
+    "links": [
+      {
+        "title": "Legal",
+        "links": [
+          {
+            "label": "Terms of Service",
+            "href": "https://fordje.com/terms"
+          },
+          {
+            "label": "Privacy Policy",
+            "href": "https://fordje.com/privacy"
+          }
+        ]
+      },
+      {
+        "title": "Resources",
+        "links": [
+          {
+            "label": "Changelog",
+            "href": "/changelog"
+          },
+          {
+            "label": "Support",
+            "href": "mailto:support@fordje.com"
+          }
+        ]
       }
     ]
   },

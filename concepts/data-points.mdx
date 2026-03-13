@@ -69,8 +69,10 @@ Every data point type has a unit of measure that tells you how to interpret the 
 | **Currency (USD)** | Dollar amount | `"150.00"` |
 | **Percentage** | Percentage value | `"80"` |
 
+Each unit of measure also includes an `abbreviation` field (e.g., `"bool"`, `"USD"`, `"%"`) that you can use for compact display or programmatic parsing. Call `GET /v1/units-of-measure` to see all units with their abbreviations.
+
 <Tip>
-  Use the `GET /v1/units-of-measure` endpoint to retrieve the full list of units programmatically. See the [reference data API docs](/api-reference/introduction) for details.
+  Use the `GET /v1/units-of-measure` endpoint to retrieve the full list of units programmatically, including their abbreviations. See the [reference data API reference](/api-reference/introduction) for details.
 </Tip>
 
 ## Filtering data points
@@ -95,7 +97,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points?state_codes=CA&category_i
   Results are always scoped to the AHJs in your subscription. If you filter by a state, you will only see data for the AHJs within that state that your organization has access to. See [AHJs](/concepts/ahjs) for details.
 </Note>
 
-Categories classify data point types into regulatory topics like Permitting, Inspections, Building Standards, and Zoning & Land Use. You can browse the full list with `GET /v1/categories`. See the [reference data docs](/api-reference/introduction) for more.
+Categories classify data point types into regulatory topics like Permitting, Inspections, Building Standards, and Zoning & Land Use. You can browse the full list with `GET /v1/categories`. See the [categories concept page](/concepts/categories) for more.
 
 ## Discovering what is available
 
@@ -184,4 +186,11 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
 
 ## Next steps
 
-See the [Data Points API reference](/api-reference/introduction) for the complete endpoint documentation, including all query parameters, response fields, and pagination options.
+<CardGroup cols={2}>
+  <Card title="Query data points" icon="database" href="/api-reference/endpoint/list_data_points">
+    Full API reference for `GET /v1/data-points` — all filters, response fields, and pagination.
+  </Card>
+  <Card title="Browse data point types" icon="tags" href="/api-reference/endpoint/list_data_point_types">
+    Full API reference for `GET /v1/data-points/types` — the global catalog of questions Fordje tracks.
+  </Card>
+</CardGroup>

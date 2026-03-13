@@ -1,0 +1,180 @@
+---
+title: "Pagination Best Practices"
+description: "How to iterate through paginated results efficiently and reliably."
+---
+
+All Fordje Connect list endpoints return paginated results. This guide covers how to iterate through pages, choose optimal page sizes, and avoid common pitfalls.
+
+## How pagination works
+
+Every paginated response includes a `pagination` object:
+
+```json
+{
+  "data": {
+    "items": [...],
+    "pagination": {
+      "page": 1,
+      "page_size": 100,
+      "total": 523,
+      "total_pages": 6
+    }
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `page` | The current page number (1-indexed) |
+| `page_size` | The number of items per page |
+| `total` | The total number of items matching your query |
+| `total_pages` | The total number of pages |
+
+Use `page` and `page_size` as query parameters to control which page you receive.
+
+## Iterating through all pages
+
+To retrieve all results, loop through pages until you reach `total_pages`:
+
+<CodeGroup>
+
+```python Python
+import requests
+
+API_KEY = "your-api-key"
+BASE_URL = "https://connect.fordje.com"
+
+
+def fetch_all_pages(endpoint, params=None):
+    """Fetch all pages from a paginated endpoint."""
+    if params is None:
+        params = {}
+
+    params.setdefault("page", 1)
+    params.setdefault("page_size", 500)
+
+    all_items = []
+
+    while True:
+        response = requests.get(
+            f"{BASE_URL}{endpoint}",
+            headers={"X-API-Key": API_KEY},
+            params=params,
+        )
+        response.raise_for_status()
+        body = response.json()
+
+        items = body["data"]["items"]
+        pagination = body["data"]["pagination"]
+
+        all_items.extend(items)
+
+        if pagination["page"] >= pagination["total_pages"]:
+            break
+
+        params["page"] = pagination["page"] + 1
+
+    return all_items
+
+
+# Fetch all AHJs
+all_ahjs = fetch_all_pages("/v1/ahjs")
+print(f"Retrieved {len(all_ahjs)} AHJs")
+
+# Fetch all data points for California
+ca_data_points = fetch_all_pages("/v1/data-points", {"state_codes": "CA"})
+print(f"Retrieved {len(ca_data_points)} data points")
+```
+
+```javascript JavaScript
+// Requires Node.js 18+ or an ES module environment for top-level await
+const API_KEY = "your-api-key";
+const BASE_URL = "https://connect.fordje.com";
+
+async function fetchAllPages(endpoint, params = {}) {
+  params.page = params.page || 1;
+  params.page_size = params.page_size || 500;
+
+  const allItems = [];
+
+  while (true) {
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`${BASE_URL}${endpoint}?${query}`, {
+      headers: { "X-API-Key": API_KEY },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    const body = await response.json();
+    const { items } = body.data;
+    const { page, total_pages } = body.data.pagination;
+
+    allItems.push(...items);
+
+    if (page >= total_pages) break;
+    params.page = page + 1;
+  }
+
+  return allItems;
+}
+
+const allAhjs = await fetchAllPages("/v1/ahjs");
+console.log(`Retrieved ${allAhjs.length} AHJs`);
+```
+
+</CodeGroup>
+
+## Choosing a page size
+
+The `page_size` parameter controls how many items are returned per request. The default is `100` and the maximum is `500`.
+
+| Use case | Recommended `page_size` | Why |
+|----------|------------------------|-----|
+| Fetching all data for a bulk sync | `500` | Minimizes total requests and stays within rate limits |
+| Interactive / on-demand lookups | `10`-`50` | Faster individual responses, only fetch what you display |
+| Exploring available data | `10`-`25` | Small responses for quick inspection |
+
+<Tip>
+  Using `page_size=500` instead of the default `100` reduces the number of requests by 5x, which helps you stay within [rate limits](/concepts/rate-limiting) when doing bulk data pulls.
+</Tip>
+
+## Caching strategies
+
+Some data changes infrequently and benefits from caching:
+
+| Data type | Suggested cache duration | Why |
+|-----------|------------------------|-----|
+| Categories (`GET /v1/categories`) | 24 hours | Categories rarely change |
+| Units of measure (`GET /v1/units-of-measure`) | 24 hours | Reference data, very stable |
+| Data point types (`GET /v1/data-points/types`) | 1-4 hours | New types are added infrequently |
+| AHJ list (`GET /v1/ahjs`) | 1 hour | Your subscription changes infrequently |
+| Data point values (`GET /v1/data-points`) | Use `updated_at` | Values change as jurisdictions update their codes |
+
+For data point values, compare the `updated_at` field against your last sync to detect changes.
+
+## Common pitfalls
+
+### Do not change filters between pages
+
+If you change query parameters (like `state_codes`, `ahj_ids`, or `category_ids`) between page requests, the result set changes and you may miss items or get duplicates. Always use the same filter parameters across all pages of a single iteration.
+
+### Do not assume total is stable
+
+The `total` count reflects the result set at query time. If data is added or removed between your page requests, `total` may shift slightly. For most use cases this is not a concern, but if you need an exact snapshot, fetch all pages in a tight loop and use the collected items as your source of truth.
+
+### Handle empty pages gracefully
+
+If a filter returns no results, the response has `total: 0`, `total_pages: 0`, and `items: []`. Your pagination loop should handle this without entering an infinite loop — always check that `total_pages` is greater than zero before iterating.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Rate limiting" icon="gauge" href="/concepts/rate-limiting">
+    Understand rate limits and how to stay within them during bulk operations.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction#pagination">
+    Full pagination parameter documentation.
+  </Card>
+</CardGroup>

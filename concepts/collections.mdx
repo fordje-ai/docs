@@ -92,7 +92,7 @@ curl -X GET "https://connect.fordje.com/v1/collections?page_size=10" \
 }
 ```
 
-The `data_point_type_ids` and `category_ids` fields tell you exactly what filters the collection applies. You can cross-reference these with the [reference data endpoints](/api-reference/introduction) to see their human-readable names.
+The `data_point_type_ids` and `category_ids` fields tell you exactly what filters the collection applies. You can cross-reference these with the reference data endpoints — `GET /v1/data-points/types` and `GET /v1/categories` — to see their human-readable names.
 
 ### Execute a collection
 
@@ -157,4 +157,11 @@ The response is a CSV file with a `Content-Type: text/csv` header. The filename 
 
 ## Next steps
 
-See the [Collections API reference](/api-reference/introduction) for the complete endpoint documentation, including all query parameters, response fields, and pagination details.
+<CardGroup cols={2}>
+  <Card title="List collections" icon="folder" href="/api-reference/endpoint/list_collections">
+    Full API reference for `GET /v1/collections` — list your organization's saved collections.
+  </Card>
+  <Card title="Execute a collection" icon="play" href="/api-reference/endpoint/get_collection_data">
+    Full API reference for `GET /v1/collections/{id}/data` — run a collection against AHJs.
+  </Card>
+</CardGroup>

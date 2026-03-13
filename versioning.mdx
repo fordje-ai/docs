@@ -1,0 +1,58 @@
+---
+title: "Versioning & Deprecation"
+description: "How Fordje Connect versions its API and handles breaking changes."
+---
+
+Fordje Connect uses URL-based versioning to ensure stability for your integrations. This page describes the versioning scheme, what counts as a breaking change, and how deprecations are communicated.
+
+## Current version
+
+The API is currently at **v1**. All endpoints are prefixed with `/v1/`:
+
+```
+https://connect.fordje.com/v1/ahjs
+https://connect.fordje.com/v1/data-points
+```
+
+## Versioning policy
+
+- **Major versions** are indicated by the URL prefix (`/v1/`, `/v2/`, etc.). A new major version is introduced only when breaking changes are necessary.
+- **Non-breaking changes** (new endpoints, new optional fields in responses, new optional query parameters) are added to the current version without a version bump.
+- **Breaking changes** (removing a field, renaming a field, changing a field's type, removing an endpoint, changing required parameters) trigger a new major version.
+
+## What counts as a breaking change
+
+| Change type | Breaking? |
+|------------|-----------|
+| Adding a new endpoint | No |
+| Adding an optional query parameter | No |
+| Adding a new field to a response object | No |
+| Adding a new value to an enum | No |
+| Removing or renaming a response field | **Yes** |
+| Removing or renaming a query parameter | **Yes** |
+| Changing a field's data type | **Yes** |
+| Changing an endpoint's URL path | **Yes** |
+| Changing the default value of a parameter | **Yes** |
+| Removing an endpoint | **Yes** |
+
+## Deprecation process
+
+When a new major version is introduced, the previous version follows this deprecation timeline:
+
+1. **Announcement** — The upcoming deprecation is announced in the [changelog](/changelog) and via email to all organizations with active API keys. The announcement includes the timeline and migration guide.
+
+2. **Overlap period** — Both the old and new versions run simultaneously for a minimum of **6 months**. During this period, both versions are fully supported.
+
+3. **Sunset headers** — Once a deprecation date is set, responses from the deprecated version include a `Sunset` header indicating when the version will be retired:
+
+    ```
+    Sunset: Sat, 01 Jan 2028 00:00:00 GMT
+    ```
+
+4. **Retirement** — After the overlap period ends, the deprecated version returns `410 Gone` for all requests. Integrations must migrate to the new version before this date.
+
+## Staying informed
+
+- Check the [changelog](/changelog) regularly for updates
+- Monitor the `Sunset` response header in your integration
+- Contact [support@fordje.com](mailto:support@fordje.com) if you need assistance with a migration

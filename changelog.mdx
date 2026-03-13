@@ -1,0 +1,40 @@
+---
+title: "Changelog"
+description: "A history of changes to the Fordje Connect API."
+---
+
+All notable changes to the Fordje Connect API are documented here. Dates reflect when changes became available in production.
+
+For details on versioning and deprecation policy, see [Versioning](/versioning).
+
+---
+
+## v1.0.0 — 2026-03-12
+
+**Initial public release of Fordje Connect.**
+
+Fordje Connect provides programmatic access to building code, zoning, permitting, licensing, utility interconnection requirements, and other regulatory data across 30,000+ US jurisdictions.
+
+### Endpoints
+
+- `GET /v1/ahjs` — List AHJs in your subscription, with optional state code filtering
+- `GET /v1/ahjs/{ahj_id}` — Get full detail for a single AHJ
+- `GET /v1/data-points` — Query data point values with filtering by AHJ, state, category, or data point type
+- `GET /v1/data-points/types` — List available data point type definitions
+- `GET /v1/categories` — List regulatory categories (e.g., Permitting, Inspections)
+- `GET /v1/units-of-measure` — List units of measure for data point values
+- `POST /v1/reports/matrix` — Generate a side-by-side AHJ comparison matrix
+- `POST /v1/reports/export` — Export a comparison report as CSV
+- `GET /v1/collections` — List your organization's saved collections
+- `GET /v1/collections/{collection_id}` — Get a collection's definition
+- `GET /v1/collections/{collection_id}/data` — Execute a collection against AHJs
+- `POST /v1/collections/{collection_id}/export` — Export collection results as CSV
+
+### Features
+
+- API key authentication via `X-API-Key` header
+- AHJ access scoping based on organization subscription
+- Partial-access responses with `warnings` array for excluded AHJs
+- Pagination across all list endpoints (up to 500 items per page)
+- Rate limiting with per-minute, per-hour, and per-day windows
+- CSV export for reports and collections
