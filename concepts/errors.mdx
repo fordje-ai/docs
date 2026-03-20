@@ -37,6 +37,7 @@ All errors follow this structure:
 | `COLLECTION_NOT_FOUND` | 404 | The requested collection does not exist or does not belong to your organization |
 | `INVALID_PARAMETER` | 422 | A query parameter or request body field is invalid |
 | `RATE_LIMIT_EXCEEDED` | 429 | You have exceeded the rate limit for your API key |
+| `INTERNAL_ERROR` | 500 | An unexpected internal error occurred |
 | `BACKEND_UNAVAILABLE` | 502 | The upstream data service is temporarily unavailable |
 
 ## Example error responses
@@ -153,8 +154,7 @@ def make_request(url, params=None):
         raise Exception(f"Validation error: {'; '.join(messages)}")
 
     if response.status_code == 429:
-        reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
-        wait_seconds = max(reset_time - int(time.time()), 1)
+        wait_seconds = int(response.headers.get("Retry-After", 60))
         raise Exception(f"Rate limited. Retry after {wait_seconds} seconds.")
 
     if response.status_code == 502:
@@ -200,8 +200,7 @@ async function makeRequest(url, params = {}) {
     throw new Error(`Validation error: ${messages}`);
   }
   if (response.status === 429) {
-    const resetTime = parseInt(response.headers.get("X-RateLimit-Reset") || "0");
-    const waitSeconds = Math.max(resetTime - Math.floor(Date.now() / 1000), 1);
+    const waitSeconds = parseInt(response.headers.get("Retry-After") || "60");
     throw new Error(`Rate limited. Retry after ${waitSeconds} seconds.`);
   }
   if (response.status === 502) {
@@ -246,8 +245,7 @@ def request_with_retry(url, params=None, max_retries=3):
         # Retry on rate limit or backend unavailable
         if response.status_code in (429, 502) and attempt < max_retries:
             if response.status_code == 429:
-                reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
-                wait = max(reset_time - int(time.time()), 1)
+                wait = int(response.headers.get("Retry-After", 60))
             else:
                 wait = 2 ** attempt  # 1s, 2s, 4s
 
@@ -285,8 +283,7 @@ async function requestWithRetry(url, params = {}, maxRetries = 3) {
     if ([429, 502].includes(response.status) && attempt < maxRetries) {
       let wait;
       if (response.status === 429) {
-        const resetTime = parseInt(response.headers.get("X-RateLimit-Reset") || "0");
-        wait = Math.max(resetTime - Math.floor(Date.now() / 1000), 1);
+        wait = parseInt(response.headers.get("Retry-After") || "60");
       } else {
         wait = 2 ** attempt; // 1s, 2s, 4s
       }
@@ -316,5 +313,5 @@ console.log(data);
 - Use the `error` field for programmatic error handling (not the `description`)
 - Check the `warnings` array on successful responses for partial access information
 - Implement retry logic with exponential backoff for `429` and `502` errors
-- For `429` responses, respect the `X-RateLimit-Reset` header to determine when to retry
+- For `429` responses, use the `Retry-After` header (seconds) to determine when to retry
 - Log the full error response body for debugging — the `description` field provides useful context

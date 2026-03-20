@@ -174,15 +174,12 @@ curl -X GET "https://connect.fordje.com/v1/ahjs/1" \
     "county": "Los Angeles",
     "population": 3979576,
     "lat": 34.0522,
-    "lon": -118.2437,
-    "census_geoid": "0644000"
+    "lon": -118.2437
   }
 }
 ```
 
-The detail response includes geographic and demographic fields like `county`, `population`, `lat`/`lon`, and `census_geoid` that are not present in the list view. The `census_geoid` is the Census Bureau GEOID (FIPS code) for the jurisdiction, useful for joining with Census data products.
-
-{/* TODO: Verify census_geoid is consistently returned from backend AHJ detail endpoint. The backend model has the field but the Connect typed schema does not yet include it — the raw backend response is passed through. */}
+The detail response includes geographic and demographic fields like `county`, `population`, and `lat`/`lon` that are not present in the list view.
 
 <Warning>
   AHJ IDs are integers, not UUIDs. Make sure your integration stores and passes them as integer values.
