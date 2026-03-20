@@ -168,5 +168,6 @@ Every response includes rate limit headers:
 | `X-RateLimit-Limit` | Maximum requests allowed in the current window |
 | `X-RateLimit-Remaining` | Requests remaining in the current window |
 | `X-RateLimit-Reset` | Unix timestamp when the current window resets |
+| `Retry-After` | Seconds until the current window resets |
 
 When the limit is exceeded, the API returns `429 Too Many Requests`. See [Rate Limiting](/concepts/rate-limiting) for strategies on handling limits.

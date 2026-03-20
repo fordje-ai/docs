@@ -22,6 +22,7 @@ Every response includes rate limit headers so you can track your usage:
 | `X-RateLimit-Limit` | Maximum requests allowed in the current window |
 | `X-RateLimit-Remaining` | Requests remaining in the current window |
 | `X-RateLimit-Reset` | Unix timestamp when the current window resets |
+| `Retry-After` | Seconds until the current window resets |
 
 ## Handling 429 responses
 
@@ -36,7 +37,7 @@ When you exceed a rate limit, the API returns a `429 Too Many Requests` response
 }
 ```
 
-Check the `X-RateLimit-Reset` header to determine when you can resume requests.
+Use the `Retry-After` header (seconds) or `X-RateLimit-Reset` (Unix timestamp) to determine when you can resume requests.
 
 ## Best practices
 
