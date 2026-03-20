@@ -167,7 +167,7 @@
     "links": [
       {
         "title": "Legal",
-        "links": [
+        "items": [
           {
             "label": "Terms of Service",
             "href": "https://fordje.com/terms"
@@ -180,7 +180,7 @@
       },
       {
         "title": "Resources",
-        "links": [
+        "items": [
           {
             "label": "Changelog",
             "href": "/changelog"
