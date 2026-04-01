@@ -193,6 +193,16 @@
       }
     ]
   },
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": ["curl", "python", "javascript"],
+      "defaults": "required",
+      "prefill": true
+    }
+  },
   "contextual": {
     "options": [
       "copy",
