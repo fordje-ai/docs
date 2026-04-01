@@ -5,6 +5,11 @@
         "description": "Public API gateway for the Fordje platform. Access AHJ data, data points, reports, and collections.",
         "version": "0.1.0"
     },
+    "servers": [
+        {
+            "url": "https://connect.fordje.com"
+        }
+    ],
     "paths": {
         "/health": {
             "get": {
