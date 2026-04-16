@@ -16,13 +16,20 @@ curl -X GET "https://connect.fordje.com/v1/ahjs" \
 
 ## Error responses
 
-If the API key is missing or invalid, the API returns a `401 Unauthorized` response:
+If the API key is missing or invalid, the API returns a `401 Unauthorized` response. The `error` field distinguishes the specific failure so you can branch on it in your client:
+
+| `error`           | Triggered when                                                                    |
+| ----------------- | --------------------------------------------------------------------------------- |
+| `MISSING_API_KEY` | The request did not include an `X-API-Key` header.                                |
+| `INVALID_API_KEY` | The `X-API-Key` header was present but the key is unknown, revoked, or malformed. |
+
+Example response:
 
 ```json
 {
   "response_type": "error",
-  "description": "Invalid or missing API key",
-  "error": "UNAUTHORIZED",
+  "description": "Missing API key. Include your key in the X-API-Key header.",
+  "error": "MISSING_API_KEY",
   "status_code": 401
 }
 ```
@@ -37,7 +44,8 @@ API keys are managed through your Fordje account. From there you can:
 - Revoke keys that are no longer needed
 
 <Warning>
-  API keys are sensitive credentials. Never expose them in client-side code, public repositories, or logs.
+  API keys are sensitive credentials. Never expose them in client-side code,
+  public repositories, or logs.
 </Warning>
 
 ## Key scoping
