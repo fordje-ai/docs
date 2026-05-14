@@ -121,10 +121,8 @@ curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-e
           "category_ids": [53]
         },
         "value": "Yes",
-        "is_approved": true,
         "reference": "Los Angeles Municipal Code",
         "section": "91.106.1.1",
-        "confidence": 0.95,
         "updated_at": "2025-01-10T08:30:00Z"
       },
       {
@@ -137,7 +135,6 @@ curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-e
           "category_ids": [53]
         },
         "value": "Yes",
-        "is_approved": true,
         "updated_at": "2025-01-12T14:00:00Z"
       }
     ],
@@ -152,7 +149,7 @@ curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-e
 }
 ```
 
-The response contains the matching current approved data point values, each tied to its AHJ and data point type. If any of the AHJ IDs you pass are outside your subscription, you will still get results for the ones you have access to, with a `warnings` array listing the excluded IDs.
+The response contains the matching published data point values, each tied to its AHJ and data point type. If any of the AHJ IDs you pass are outside your subscription, you will still get results for the ones you have access to, with a `warnings` array listing the excluded IDs.
 
 ### Export as CSV
 

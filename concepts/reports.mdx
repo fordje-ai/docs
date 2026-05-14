@@ -23,7 +23,7 @@ Reports are built for scenarios where comparison is the point:
 
 ## The matrix format
 
-The matrix report organizes results into rows, one per AHJ. Each row contains a `values` object where the keys are data point type IDs and the values are current approved value objects for that jurisdiction.
+The matrix report organizes results into rows, one per AHJ. Each row contains a `values` object where the keys are data point type IDs and the values are published value objects for that jurisdiction.
 
 To generate a matrix, send a POST request with the AHJ IDs and data point type IDs you want to compare:
 
@@ -58,8 +58,7 @@ curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
           "10": {
             "value": "Yes",
             "reference": "Los Angeles Municipal Code",
-            "section": "91.106.1.1",
-            "confidence": 0.95
+            "section": "91.106.1.1"
           },
           "20": { "value": "Annual" },
           "30": { "value": "$150.00" }

@@ -31,7 +31,7 @@ The **type** is the question. "Is a permit required for re-roofing?" is a data p
 
 The **value** is a specific jurisdiction's answer to that question. "Yes" in Los Angeles, "No" in Houston. Values are always tied to an AHJ.
 
-Fordje Connect returns the current approved value for each AHJ and data point type. Pending, rejected, and superseded versions are internal review states and are not exposed through the public API. When available, provenance fields such as `reference`, `section`, `confidence`, and `reference_material` describe the current approved value.
+Fordje Connect returns the latest published value for each AHJ and data point type. Internal review states are not exposed through the public API. When available, provenance fields such as `reference`, `section`, and `reference_material` describe the published value.
 
 When you query `GET /v1/data-points`, each item in the response includes both the type (nested as `data_point_type`) and the value:
 
@@ -50,14 +50,11 @@ When you query `GET /v1/data-points`, each item in the response includes both th
     "description": "Whether a permit is required for this work type",
     "unit_of_measure": null,
     "unit_of_measure_id": 1,
-    "output_format": "SINGLE_VALUE",
     "category_ids": [53]
   },
   "value": "Yes",
-  "is_approved": true,
   "reference": "Los Angeles Municipal Code",
   "section": "91.106.1.1",
-  "confidence": 0.95,
   "reference_material": {
     "id": 77,
     "name": "Los Angeles Municipal Code",
@@ -144,14 +141,11 @@ curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&page_size=5" \
           "description": "Whether a permit is required for this work type",
           "unit_of_measure": null,
           "unit_of_measure_id": 1,
-          "output_format": "SINGLE_VALUE",
           "category_ids": [53]
         },
         "value": "Yes",
-        "is_approved": true,
         "reference": "Los Angeles Municipal Code",
         "section": "91.106.1.1",
-        "confidence": 0.95,
         "reference_material": {
           "id": 77,
           "name": "Los Angeles Municipal Code",
@@ -189,7 +183,6 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
         "description": "Whether a permit is required for this work type",
         "unit_of_measure": null,
         "unit_of_measure_id": 1,
-        "output_format": "SINGLE_VALUE",
         "category_ids": [53]
       },
       {
@@ -198,7 +191,6 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
         "description": "How often inspections are required",
         "unit_of_measure": null,
         "unit_of_measure_id": 2,
-        "output_format": "SHORT_ANSWER",
         "category_ids": [63]
       }
     ],

@@ -483,16 +483,13 @@
                                                     "name": "Solar Panel Setback",
                                                     "description": "Minimum setback distance for rooftop solar panels",
                                                     "unit_of_measure_id": 4,
-                                                    "output_format": "SINGLE_VALUE",
                                                     "category_ids": [
                                                         16
                                                     ]
                                                 },
                                                 "value": "3 feet",
-                                                "is_approved": true,
                                                 "reference": "Austin Municipal Code",
                                                 "section": "25-2-492",
-                                                "confidence": 0.94,
                                                 "reference_material": {
                                                     "id": 77,
                                                     "name": "Austin Municipal Code",
@@ -625,7 +622,6 @@
                                                 "name": "Solar Panel Setback",
                                                 "description": "Minimum setback distance for rooftop solar panels",
                                                 "unit_of_measure_id": 4,
-                                                "output_format": "SINGLE_VALUE",
                                                 "category_ids": [
                                                     16
                                                 ]

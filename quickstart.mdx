@@ -140,14 +140,11 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
               "description": "Whether a permit is required for this work type",
               "unit_of_measure": null,
               "unit_of_measure_id": 1,
-              "output_format": "SINGLE_VALUE",
               "category_ids": [53]
             },
             "value": "Yes",
-            "is_approved": true,
             "reference": "Los Angeles Municipal Code",
             "section": "91.106.1.1",
-            "confidence": 0.95,
             "updated_at": "2025-01-10T08:30:00Z"
           }
         ],
@@ -161,7 +158,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     }
     ```
 
-    Each item pairs an AHJ with a data point type and the current approved value for that jurisdiction. When available, the response also includes source metadata such as `reference`, `section`, and `confidence`.
+    Each item pairs an AHJ with a data point type and the latest published value for that jurisdiction. When available, the response also includes source metadata such as `reference` and `section`.
 
     <Info>
       You can also filter by `state_codes` (e.g., `state_codes=CA`) or `category_ids` to narrow results to a specific topic like Permitting or Inspections. See the [data points concept page](/concepts/data-points) for all available filters.
@@ -222,7 +219,6 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
               "category_ids": [53]
             },
             "value": "Yes",
-            "is_approved": true,
             "reference": "Los Angeles Municipal Code",
             "updated_at": "2025-01-10T08:30:00Z"
           }
@@ -338,7 +334,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     }
     ```
 
-    Each row is an AHJ, and each key in `values` maps to a data point type ID. The cell object contains the current approved `value` and any available source metadata.
+    Each row is an AHJ, and each key in `values` maps to a data point type ID. The cell object contains the published `value` and any available source metadata.
 
     <Tip>
       You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports concept page](/concepts/reports) for details.
