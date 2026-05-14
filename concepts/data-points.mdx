@@ -31,6 +31,8 @@ The **type** is the question. "Is a permit required for re-roofing?" is a data p
 
 The **value** is a specific jurisdiction's answer to that question. "Yes" in Los Angeles, "No" in Houston. Values are always tied to an AHJ.
 
+Fordje Connect returns the current approved value for each AHJ and data point type. Pending, rejected, and superseded versions are internal review states and are not exposed through the public API. When available, provenance fields such as `reference`, `section`, `confidence`, and `reference_material` describe the current approved value.
+
 When you query `GET /v1/data-points`, each item in the response includes both the type (nested as `data_point_type`) and the value:
 
 ```json
@@ -46,9 +48,21 @@ When you query `GET /v1/data-points`, each item in the response includes both th
     "id": 10,
     "name": "Permit Required",
     "description": "Whether a permit is required for this work type",
-    "unit_of_measure": "boolean"
+    "unit_of_measure": null,
+    "unit_of_measure_id": 1,
+    "output_format": "SINGLE_VALUE",
+    "category_ids": [53]
   },
   "value": "Yes",
+  "is_approved": true,
+  "reference": "Los Angeles Municipal Code",
+  "section": "91.106.1.1",
+  "confidence": 0.95,
+  "reference_material": {
+    "id": 77,
+    "name": "Los Angeles Municipal Code",
+    "description": "City code reference"
+  },
   "updated_at": "2025-01-10T08:30:00Z"
 }
 ```
@@ -59,7 +73,7 @@ When you query `GET /v1/data-points`, each item in the response includes both th
 
 ## Units of measure
 
-Every data point type has a unit of measure that tells you how to interpret the value. The API returns the unit on each `data_point_type` object.
+Every data point type has a unit of measure that tells you how to interpret the value. Data point type objects include `unit_of_measure_id`; use `GET /v1/units-of-measure` to resolve the ID to a name and abbreviation. When the backend provides a resolved name inline, it appears as `unit_of_measure`.
 
 | Unit | Description | Example value |
 |------|-------------|---------------|
@@ -128,9 +142,21 @@ curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&page_size=5" \
           "id": 10,
           "name": "Permit Required",
           "description": "Whether a permit is required for this work type",
-          "unit_of_measure": "boolean"
+          "unit_of_measure": null,
+          "unit_of_measure_id": 1,
+          "output_format": "SINGLE_VALUE",
+          "category_ids": [53]
         },
         "value": "Yes",
+        "is_approved": true,
+        "reference": "Los Angeles Municipal Code",
+        "section": "91.106.1.1",
+        "confidence": 0.95,
+        "reference_material": {
+          "id": 77,
+          "name": "Los Angeles Municipal Code",
+          "description": "City code reference"
+        },
         "updated_at": "2025-01-10T08:30:00Z"
       }
     ],
@@ -161,13 +187,19 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
         "id": 10,
         "name": "Permit Required",
         "description": "Whether a permit is required for this work type",
-        "unit_of_measure": "boolean"
+        "unit_of_measure": null,
+        "unit_of_measure_id": 1,
+        "output_format": "SINGLE_VALUE",
+        "category_ids": [53]
       },
       {
         "id": 20,
         "name": "Inspection Frequency",
         "description": "How often inspections are required",
-        "unit_of_measure": "text"
+        "unit_of_measure": null,
+        "unit_of_measure_id": 2,
+        "output_format": "SHORT_ANSWER",
+        "category_ids": [63]
       }
     ],
     "pagination": {

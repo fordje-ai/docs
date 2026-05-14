@@ -130,11 +130,37 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful Response",
+                        "description": "Retrieved 2 AHJ(s)",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BaseResponse"
+                                },
+                                "example": {
+                                    "response_type": "success",
+                                    "description": "Retrieved 2 AHJ(s)",
+                                    "data": {
+                                        "items": [
+                                            {
+                                                "id": 42,
+                                                "name": "City of Austin",
+                                                "type": "city",
+                                                "state_code": "TX"
+                                            },
+                                            {
+                                                "id": 89,
+                                                "name": "Travis County",
+                                                "type": "county",
+                                                "state_code": "TX"
+                                            }
+                                        ],
+                                        "pagination": {
+                                            "page": 1,
+                                            "page_size": 50,
+                                            "total": 142,
+                                            "total_pages": 3
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -218,11 +244,26 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful Response",
+                        "description": "AHJ detail",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BaseResponse"
+                                },
+                                "example": {
+                                    "response_type": "success",
+                                    "description": "AHJ 42 detail",
+                                    "data": {
+                                        "id": 42,
+                                        "name": "City of Austin",
+                                        "type": "city",
+                                        "state_code": "TX",
+                                        "state_name": "Texas",
+                                        "county": "Travis",
+                                        "population": 965872,
+                                        "lat": 30.2672,
+                                        "lon": -97.7431
+                                    }
                                 }
                             }
                         }
@@ -418,11 +459,55 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful Response",
+                        "description": "Retrieved 1 data point(s)",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BaseResponse"
+                                },
+                                "example": {
+                                    "response_type": "success",
+                                    "description": "Retrieved 1 data point(s)",
+                                    "data": {
+                                        "items": [
+                                            {
+                                                "id": 5821,
+                                                "ahj": {
+                                                    "id": 42,
+                                                    "name": "City of Austin",
+                                                    "type": "city",
+                                                    "state_code": "TX"
+                                                },
+                                                "data_point_type": {
+                                                    "id": 10,
+                                                    "name": "Solar Panel Setback",
+                                                    "description": "Minimum setback distance for rooftop solar panels",
+                                                    "unit_of_measure_id": 4,
+                                                    "output_format": "SINGLE_VALUE",
+                                                    "category_ids": [
+                                                        16
+                                                    ]
+                                                },
+                                                "value": "3 feet",
+                                                "is_approved": true,
+                                                "reference": "Austin Municipal Code",
+                                                "section": "25-2-492",
+                                                "confidence": 0.94,
+                                                "reference_material": {
+                                                    "id": 77,
+                                                    "name": "Austin Municipal Code",
+                                                    "description": "City code reference"
+                                                },
+                                                "updated_at": "2026-03-14T10:24:00Z"
+                                            }
+                                        ],
+                                        "pagination": {
+                                            "page": 1,
+                                            "page_size": 50,
+                                            "total": 142,
+                                            "total_pages": 3
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -524,11 +609,35 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful Response",
+                        "description": "Retrieved 1 data point type(s)",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BaseResponse"
+                                },
+                                "example": {
+                                    "response_type": "success",
+                                    "description": "Retrieved 1 data point type(s)",
+                                    "data": {
+                                        "items": [
+                                            {
+                                                "id": 10,
+                                                "name": "Solar Panel Setback",
+                                                "description": "Minimum setback distance for rooftop solar panels",
+                                                "unit_of_measure_id": 4,
+                                                "output_format": "SINGLE_VALUE",
+                                                "category_ids": [
+                                                    16
+                                                ]
+                                            }
+                                        ],
+                                        "pagination": {
+                                            "page": 1,
+                                            "page_size": 50,
+                                            "total": 142,
+                                            "total_pages": 3
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1739,6 +1848,7 @@
                         },
                         "type": "array",
                         "maxItems": 500,
+                        "minItems": 1,
                         "title": "Ahj Ids",
                         "description": "AHJ IDs to include",
                         "examples": [
@@ -1755,6 +1865,7 @@
                         },
                         "type": "array",
                         "maxItems": 500,
+                        "minItems": 1,
                         "title": "Data Point Type Ids",
                         "description": "Data point type IDs",
                         "examples": [
@@ -1797,13 +1908,6 @@
                     "type": {
                         "type": "string",
                         "title": "Error Type"
-                    },
-                    "input": {
-                        "title": "Input"
-                    },
-                    "ctx": {
-                        "type": "object",
-                        "title": "Context"
                     }
                 },
                 "type": "object",
@@ -1822,31 +1926,5 @@
                 "name": "X-API-Key"
             }
         }
-    },
-    "tags": [
-        {
-            "name": "AHJs",
-            "description": "Authority Having Jurisdiction data"
-        },
-        {
-            "name": "Data Points",
-            "description": "Data point values and type definitions"
-        },
-        {
-            "name": "Reference Data",
-            "description": "Categories and units of measure"
-        },
-        {
-            "name": "Reports",
-            "description": "Ad-hoc comparison reports and CSV exports"
-        },
-        {
-            "name": "Collections",
-            "description": "Saved data pull configurations (read-only, execute, export)"
-        },
-        {
-            "name": "Health",
-            "description": "Service health checks"
-        }
-    ]
+    }
 }

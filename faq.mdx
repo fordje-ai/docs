@@ -15,7 +15,7 @@ description: "Frequently asked questions about Fordje Connect."
   <Accordion title="How often is the data updated?">
     Fordje continuously monitors regulatory sources and updates data points as jurisdictions publish changes. Update frequency varies by jurisdiction and data type — some data points are reviewed quarterly, others as changes are published.
 
-    Every data point includes an `updated_at` timestamp that reflects when the value was last confirmed or changed by the Fordje research team. Use this field to assess data freshness in your integration.
+    The public API returns the current approved value for each data point. When the backend supplies an approval timestamp, it appears as `updated_at`; otherwise, treat the response as the latest snapshot available through Fordje Connect.
   </Accordion>
 
   <Accordion title="Can I get historical data or change history for data points?">
