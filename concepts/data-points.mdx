@@ -31,7 +31,7 @@ The **type** is the question. "Is a permit required for re-roofing?" is a data p
 
 The **value** is a specific jurisdiction's answer to that question. "Yes" in Los Angeles, "No" in Houston. Values are always tied to an AHJ.
 
-Fordje Connect returns the latest published value for each AHJ and data point type. Internal review states are not exposed through the public API. When available, provenance fields such as `reference`, `section`, and `reference_material` describe the published value.
+Fordje Connect returns the latest published value for each AHJ and data point type. Internal review states are not exposed through the public API. When available, provenance fields such as `reference` and `section` describe the published value.
 
 When you query `GET /v1/data-points`, each item in the response includes both the type (nested as `data_point_type`) and the value:
 
@@ -48,18 +48,12 @@ When you query `GET /v1/data-points`, each item in the response includes both th
     "id": 10,
     "name": "Permit Required",
     "description": "Whether a permit is required for this work type",
-    "unit_of_measure": null,
-    "unit_of_measure_id": 1,
+    "unit_of_measure": "boolean",
     "category_ids": [53]
   },
   "value": "Yes",
   "reference": "Los Angeles Municipal Code",
   "section": "91.106.1.1",
-  "reference_material": {
-    "id": 77,
-    "name": "Los Angeles Municipal Code",
-    "description": "City code reference"
-  },
   "updated_at": "2025-01-10T08:30:00Z"
 }
 ```
@@ -70,7 +64,7 @@ When you query `GET /v1/data-points`, each item in the response includes both th
 
 ## Units of measure
 
-Every data point type has a unit of measure that tells you how to interpret the value. Data point type objects include `unit_of_measure_id`; use `GET /v1/units-of-measure` to resolve the ID to a name and abbreviation. When the backend provides a resolved name inline, it appears as `unit_of_measure`.
+Every data point type has a unit of measure that tells you how to interpret the value. When Fordje Connect has a display name for the unit, it appears as `unit_of_measure`.
 
 | Unit | Description | Example value |
 |------|-------------|---------------|
@@ -139,18 +133,12 @@ curl -X GET "https://connect.fordje.com/v1/data-points?ahj_ids=1&page_size=5" \
           "id": 10,
           "name": "Permit Required",
           "description": "Whether a permit is required for this work type",
-          "unit_of_measure": null,
-          "unit_of_measure_id": 1,
+          "unit_of_measure": "boolean",
           "category_ids": [53]
         },
         "value": "Yes",
         "reference": "Los Angeles Municipal Code",
         "section": "91.106.1.1",
-        "reference_material": {
-          "id": 77,
-          "name": "Los Angeles Municipal Code",
-          "description": "City code reference"
-        },
         "updated_at": "2025-01-10T08:30:00Z"
       }
     ],
@@ -181,16 +169,14 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
         "id": 10,
         "name": "Permit Required",
         "description": "Whether a permit is required for this work type",
-        "unit_of_measure": null,
-        "unit_of_measure_id": 1,
+        "unit_of_measure": "boolean",
         "category_ids": [53]
       },
       {
         "id": 20,
         "name": "Inspection Frequency",
         "description": "How often inspections are required",
-        "unit_of_measure": null,
-        "unit_of_measure_id": 2,
+        "unit_of_measure": "text",
         "category_ids": [63]
       }
     ],
