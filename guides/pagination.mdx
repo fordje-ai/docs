@@ -150,9 +150,9 @@ Some data changes infrequently and benefits from caching:
 | Units of measure (`GET /v1/units-of-measure`) | 24 hours | Reference data, very stable |
 | Data point types (`GET /v1/data-points/types`) | 1-4 hours | New types are added infrequently |
 | AHJ list (`GET /v1/ahjs`) | 1 hour | Your subscription changes infrequently |
-| Data point values (`GET /v1/data-points`) | Use `updated_at` | Values change as jurisdictions update their codes |
+| Data point values (`GET /v1/data-points`) | Short TTL or `updated_at` when present | Values change as jurisdictions update their codes |
 
-For data point values, compare the `updated_at` field against your last sync to detect changes.
+For data point values, compare `updated_at` against your last sync when it is present. If `updated_at` is `null`, cache the response for a short interval and store snapshots in your own system if you need change detection.
 
 ## Common pitfalls
 

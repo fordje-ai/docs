@@ -138,9 +138,12 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
               "id": 10,
               "name": "Permit Required",
               "description": "Whether a permit is required for this work type",
-              "unit_of_measure": "boolean"
+              "unit_of_measure": "boolean",
+              "category_ids": [53]
             },
             "value": "Yes",
+            "reference": "Los Angeles Municipal Code",
+            "section": "91.106.1.1",
             "updated_at": "2025-01-10T08:30:00Z"
           }
         ],
@@ -154,7 +157,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     }
     ```
 
-    Each item pairs an AHJ with a data point type and its value for that jurisdiction.
+    Each item pairs an AHJ with a data point type and the latest published value for that jurisdiction. When available, the response also includes source metadata such as `reference` and `section`.
 
     <Info>
       You can also filter by `state_codes` (e.g., `state_codes=CA`) or `category_ids` to narrow results to a specific topic like Permitting or Inspections. See the [data points concept page](/concepts/data-points) for all available filters.
@@ -208,8 +211,14 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
         "items": [
           {
             "ahj": { "id": 1, "name": "City of Los Angeles" },
-            "data_point_type": { "id": 10, "name": "Permit Required" },
+            "data_point_type": {
+              "id": 10,
+              "name": "Permit Required",
+              "unit_of_measure": "boolean",
+              "category_ids": [53]
+            },
             "value": "Yes",
+            "reference": "Los Angeles Municipal Code",
             "updated_at": "2025-01-10T08:30:00Z"
           }
         ],
@@ -293,21 +302,30 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
       "response_type": "success",
       "description": "Generated matrix for 3 AHJ(s)",
       "data": {
+        "ahjs": [
+          { "id": 1, "name": "City of Los Angeles", "state_code": "CA" },
+          { "id": 2, "name": "City of Houston", "state_code": "TX" }
+        ],
+        "data_point_types": [
+          { "id": 10, "name": "Permit Required" },
+          { "id": 20, "name": "Inspection Frequency" },
+          { "id": 30, "name": "Permit Fee" }
+        ],
         "rows": [
           {
             "ahj": { "id": 1, "name": "City of Los Angeles" },
             "values": {
-              "10": "Yes",
-              "20": "Annual",
-              "30": "$150.00"
+              "10": { "value": "Yes", "reference": "Los Angeles Municipal Code" },
+              "20": { "value": "Annual" },
+              "30": { "value": "$150.00" }
             }
           },
           {
             "ahj": { "id": 2, "name": "City of Houston" },
             "values": {
-              "10": "Yes",
-              "20": "Biannual",
-              "30": "$125.00"
+              "10": { "value": "Yes" },
+              "20": { "value": "Biannual" },
+              "30": { "value": "$125.00" }
             }
           }
         ]
@@ -315,7 +333,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     }
     ```
 
-    Each row is an AHJ, and each key in `values` maps to a data point type ID — giving you a side-by-side comparison of how each jurisdiction handles each code requirement.
+    Each row is an AHJ, and each key in `values` maps to a data point type ID. The cell object contains the published `value` and any available source metadata.
 
     <Tip>
       You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports concept page](/concepts/reports) for details.
