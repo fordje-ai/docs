@@ -197,6 +197,8 @@ The detail response includes geographic and demographic fields like `county`, `p
 
 Every AHJ tied to a U.S. geography carries a `geoid` — its **Census GEOID** (a FIPS-based identifier). County geoIDs are 5 characters, Census places are 7, and townships are 10. If you already work with Census or TIGER/Line data, the `geoid` lets you cross-reference Fordje AHJs without ever touching Fordje's internal integer IDs.
 
+Don't have a GEOID handy? Look one up by address or place name with the [U.S. Census Bureau Geocoder](https://geocoding.geo.census.gov/geocoder/) or browse the [TIGER/Line GEOID reference](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You can also get an AHJ's `geoid` directly from any `/v1/ahjs` or `/v1/ahjs/{id}` response.
+
 <Warning>
   GeoIDs are **case-sensitive strings with significant leading zeros**. `06001`
   (Alameda County, CA) is not the same as `6001`. Always store and pass them as

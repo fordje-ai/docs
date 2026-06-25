@@ -13,7 +13,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
 <Info>
   **Python examples** use the `requests` library — install it with `pip install requests`.
 
-  **JavaScript examples** use top-level `await` and the built-in `fetch` API, which requires an ES module environment. In Node.js 18+, either add `"type": "module"` to your `package.json` or save files with the `.mjs` extension. Alternatively, wrap the code in an `async function`.
+**JavaScript examples** use top-level `await` and the built-in `fetch` API, which requires an ES module environment. In Node.js 18+, either add `"type": "module"` to your `package.json` or save files with the `.mjs` extension. Alternatively, wrap the code in an `async function`.
+
 </Info>
 
 <Steps>
@@ -64,7 +65,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
             "id": 1,
             "name": "City of Los Angeles",
             "type": "city",
-            "state_code": "CA"
+            "state_code": "CA",
+            "geoid": "0644000"
           }
         ],
         "pagination": {
@@ -77,7 +79,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     }
     ```
 
-    Each AHJ has an `id` you'll use in later requests, along with its name, type (city, county, or state), and `state_code`.
+    Each AHJ has an `id` you'll use in later requests, along with its name, type (city, county, or state), `state_code`, and `geoid` (its Census GEOID — see [looking up AHJs by geoID](/concepts/ahjs#looking-up-ahjs-by-geoid)).
+
   </Step>
 
   <Step title="Look up code requirements">
@@ -162,6 +165,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     <Info>
       You can also filter by `state_codes` (e.g., `state_codes=CA`) or `category_ids` to narrow results to a specific topic like Permitting or Inspections. See the [data points concept page](/concepts/data-points) for all available filters.
     </Info>
+
   </Step>
 
   <Step title="Pull a curated set with collections">
@@ -210,7 +214,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
         "collection_name": "Permitting Requirements",
         "items": [
           {
-            "ahj": { "id": 1, "name": "City of Los Angeles" },
+            "ahj": { "id": 1, "name": "City of Los Angeles", "geoid": "0644000" },
             "data_point_type": {
               "id": 10,
               "name": "Permit Required",
@@ -237,6 +241,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     <Tip>
       To see which collections your organization has set up, call `GET /v1/collections`. See the [collections concept page](/concepts/collections) for details.
     </Tip>
+
   </Step>
 
   <Step title="Compare across jurisdictions">
@@ -303,8 +308,8 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
       "description": "Generated matrix for 3 AHJ(s)",
       "data": {
         "ahjs": [
-          { "id": 1, "name": "City of Los Angeles", "state_code": "CA" },
-          { "id": 2, "name": "City of Houston", "state_code": "TX" }
+          { "id": 1, "name": "City of Los Angeles", "state_code": "CA", "geoid": "0644000" },
+          { "id": 2, "name": "City of Houston", "state_code": "TX", "geoid": "4835000" }
         ],
         "data_point_types": [
           { "id": 10, "name": "Permit Required" },
@@ -313,7 +318,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
         ],
         "rows": [
           {
-            "ahj": { "id": 1, "name": "City of Los Angeles" },
+            "ahj": { "id": 1, "name": "City of Los Angeles", "geoid": "0644000" },
             "values": {
               "10": { "value": "Yes", "reference": "Los Angeles Municipal Code" },
               "20": { "value": "Annual" },
@@ -321,7 +326,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
             }
           },
           {
-            "ahj": { "id": 2, "name": "City of Houston" },
+            "ahj": { "id": 2, "name": "City of Houston", "geoid": "4835000" },
             "values": {
               "10": { "value": "Yes" },
               "20": { "value": "Biannual" },
@@ -338,6 +343,7 @@ This guide walks you through your first few API calls to Fordje Connect. By the 
     <Tip>
       You can also export report data as CSV using the `POST /v1/reports/export` endpoint. See the [reports concept page](/concepts/reports) for details.
     </Tip>
+
   </Step>
 </Steps>
 
