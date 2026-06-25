@@ -572,6 +572,89 @@
         }
       }
     },
+    "/v1/geoid/{geoid}/collections/{collection_id}/export": {
+      "post": {
+        "tags": ["GeoID"],
+        "summary": "Export collection for a geoID as CSV",
+        "description": "Resolve the geoID to its AHJ, enforce access, and export the collection's data for that single AHJ as CSV. Same CSV shape as POST /v1/collections/{collection_id}/export. Unknown geoID returns 404; a resolved AHJ outside your subscription returns 403.",
+        "operationId": "export_collection_for_geoid",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "geoid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Census GEOID (string, leading zeros significant)",
+              "examples": ["4805000"],
+              "title": "Geoid"
+            }
+          },
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "CSV export", "content": { "text/csv": {} } },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Collection not found, or no AHJ matches this geoID",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "502": {
+            "description": "Backend service unavailable",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/data-points": {
       "get": {
         "tags": ["Data Points"],
