@@ -324,6 +324,102 @@
         }
       }
     },
+    "/v1/geoid/{geoid}": {
+      "get": {
+        "tags": ["GeoID"],
+        "summary": "Get AHJ by geoID",
+        "description": "Resolve a Census GEOID to its AHJ and return full AHJ detail (same shape as GET /v1/ahjs/{ahj_id}). GeoIDs are case-sensitive strings with significant leading zeros. Unknown or hidden geoIDs return 404; a resolved AHJ outside your subscription returns 403.",
+        "operationId": "get_ahj_by_geoid",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "geoid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Census GEOID (string, leading zeros significant)",
+              "examples": ["4805000"],
+              "title": "Geoid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AHJ detail",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BaseResponse" },
+                "example": {
+                  "response_type": "success",
+                  "description": "AHJ 42 detail",
+                  "data": {
+                    "id": 42,
+                    "name": "City of Austin",
+                    "type": "city",
+                    "state_code": "TX",
+                    "state_name": "Texas",
+                    "county": "Travis",
+                    "population": 965872,
+                    "lat": 30.2672,
+                    "lon": -97.7431,
+                    "geoid": "4805000"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "No AHJ matches this geoID",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "502": {
+            "description": "Backend service unavailable",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/data-points": {
       "get": {
         "tags": ["Data Points"],
