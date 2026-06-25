@@ -1264,14 +1264,26 @@
           {
             "name": "ahj_ids",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "description": "Comma-separated AHJ IDs to query",
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Comma-separated AHJ IDs to query. Provide either ahj_ids or geoids (exactly one).",
               "examples": ["1,2,3"],
               "title": "Ahj Ids"
             },
-            "description": "Comma-separated AHJ IDs to query"
+            "description": "Comma-separated AHJ IDs to query. Provide either ahj_ids or geoids (exactly one)."
+          },
+          {
+            "name": "geoids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Comma-separated Census GEOIDs (alternative to ahj_ids). Strings with significant leading zeros.",
+              "examples": ["17031,06001"],
+              "title": "Geoids"
+            },
+            "description": "Comma-separated Census GEOIDs (alternative to ahj_ids). Strings with significant leading zeros."
           },
           {
             "name": "page",
@@ -1400,14 +1412,26 @@
           {
             "name": "ahj_ids",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "description": "Comma-separated AHJ IDs to export",
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Comma-separated AHJ IDs to export. Provide either ahj_ids or geoids (exactly one).",
               "examples": ["1,2,3"],
               "title": "Ahj Ids"
             },
-            "description": "Comma-separated AHJ IDs to export"
+            "description": "Comma-separated AHJ IDs to export. Provide either ahj_ids or geoids (exactly one)."
+          },
+          {
+            "name": "geoids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Comma-separated Census GEOIDs (alternative to ahj_ids). Strings with significant leading zeros.",
+              "examples": ["17031,06001"],
+              "title": "Geoids"
+            },
+            "description": "Comma-separated Census GEOIDs (alternative to ahj_ids). Strings with significant leading zeros."
           }
         ],
         "responses": {
