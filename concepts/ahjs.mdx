@@ -11,12 +11,12 @@ If you are building software that touches construction, energy, permitting, or c
 
 AHJs fall into four categories, each operating at a different level of the regulatory stack:
 
-| Type | What they govern | Examples |
-|------|-----------------|----------|
-| **City** | Municipal building codes, local permits, zoning ordinances, inspection requirements | City of Los Angeles, City of Houston |
-| **County** | Unincorporated area codes, county-wide fire and safety standards, regional planning rules | Los Angeles County, Harris County |
-| **State** | Statewide building codes, energy codes, licensing requirements, baseline standards that apply everywhere | California, Texas |
-| **Utility** | Interconnection standards, metering requirements, net metering policies, voltage thresholds | Pacific Gas & Electric, Duke Energy |
+| Type        | What they govern                                                                                         | Examples                             |
+| ----------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| **City**    | Municipal building codes, local permits, zoning ordinances, inspection requirements                      | City of Los Angeles, City of Houston |
+| **County**  | Unincorporated area codes, county-wide fire and safety standards, regional planning rules                | Los Angeles County, Harris County    |
+| **State**   | Statewide building codes, energy codes, licensing requirements, baseline standards that apply everywhere | California, Texas                    |
+| **Utility** | Interconnection standards, metering requirements, net metering policies, voltage thresholds              | Pacific Gas & Electric, Duke Energy  |
 
 Every AHJ in the API includes a `type` field so you can distinguish between them programmatically.
 
@@ -29,7 +29,9 @@ This layering is called jurisdictional laddering. A city often adopts the state'
 Fordje resolves this behind the scenes. When you pull data points for an AHJ, the values already account for the full chain of parent jurisdictions. You get the complete, resolved answer — not a set of fragments you need to piece together yourself.
 
 <Info>
-  You do not need to query multiple AHJ levels and merge the results. Fordje handles jurisdictional laddering internally and returns the effective value for each data point.
+  You do not need to query multiple AHJ levels and merge the results. Fordje
+  handles jurisdictional laddering internally and returns the effective value
+  for each data point.
 </Info>
 
 ## Access scoping
@@ -71,7 +73,7 @@ When you request multiple AHJs in a bulk endpoint (like `GET /v1/data-points?ahj
   "description": "Retrieved 25 data point(s)",
   "data": {
     "items": ["..."],
-    "pagination": { "..." : "..." }
+    "pagination": { "...": "..." }
   },
   "warnings": [
     {
@@ -84,7 +86,8 @@ When you request multiple AHJs in a bulk endpoint (like `GET /v1/data-points?ahj
 ```
 
 <Note>
-  The API returns a successful response with partial data rather than failing the entire request. Always check the `warnings` array to detect excluded AHJs.
+  The API returns a successful response with partial data rather than failing
+  the entire request. Always check the `warnings` array to detect excluded AHJs.
 </Note>
 
 ### Full denial
@@ -93,18 +96,18 @@ If **all** requested AHJs are outside your subscription, the API returns a `403`
 
 ### Endpoint access behavior
 
-| Endpoint | Access behavior |
-|----------|----------------|
-| `GET /v1/ahjs` | Returns only subscribed AHJs |
-| `GET /v1/ahjs/{id}` | 403 if not subscribed |
-| `GET /v1/data-points` | Filters to subscribed AHJs, warns about excluded |
-| `POST /v1/reports/matrix` | Partial results + warnings |
-| `POST /v1/reports/export` | Filters to subscribed AHJs |
-| `GET /v1/collections/{id}/data` | Partial results + warnings |
-| `POST /v1/collections/{id}/export` | Filters to subscribed AHJs |
-| `GET /v1/data-points/types` | No AHJ scoping (global reference data) |
-| `GET /v1/categories` | No AHJ scoping (global reference data) |
-| `GET /v1/units-of-measure` | No AHJ scoping (global reference data) |
+| Endpoint                           | Access behavior                                  |
+| ---------------------------------- | ------------------------------------------------ |
+| `GET /v1/ahjs`                     | Returns only subscribed AHJs                     |
+| `GET /v1/ahjs/{id}`                | 403 if not subscribed                            |
+| `GET /v1/data-points`              | Filters to subscribed AHJs, warns about excluded |
+| `POST /v1/reports/matrix`          | Partial results + warnings                       |
+| `POST /v1/reports/export`          | Filters to subscribed AHJs                       |
+| `GET /v1/collections/{id}/data`    | Partial results + warnings                       |
+| `POST /v1/collections/{id}/export` | Filters to subscribed AHJs                       |
+| `GET /v1/data-points/types`        | No AHJ scoping (global reference data)           |
+| `GET /v1/categories`               | No AHJ scoping (global reference data)           |
+| `GET /v1/units-of-measure`         | No AHJ scoping (global reference data)           |
 
 ## Working with AHJs
 
@@ -127,19 +130,22 @@ curl -X GET "https://connect.fordje.com/v1/ahjs?state_codes=CA&page_size=10" \
         "id": 1,
         "name": "City of Los Angeles",
         "type": "city",
-        "state_code": "CA"
+        "state_code": "CA",
+        "geoid": "0644000"
       },
       {
         "id": 47,
         "name": "Los Angeles County",
         "type": "county",
-        "state_code": "CA"
+        "state_code": "CA",
+        "geoid": "06037"
       },
       {
         "id": 112,
         "name": "Pacific Gas & Electric",
         "type": "utility",
-        "state_code": "CA"
+        "state_code": "CA",
+        "geoid": null
       }
     ],
     "pagination": {
@@ -174,24 +180,114 @@ curl -X GET "https://connect.fordje.com/v1/ahjs/1" \
     "county": "Los Angeles",
     "population": 3979576,
     "lat": 34.0522,
-    "lon": -118.2437
+    "lon": -118.2437,
+    "geoid": "0644000"
   }
 }
 ```
 
-The detail response includes geographic and demographic fields like `county`, `population`, and `lat`/`lon` that are not present in the list view.
+The detail response includes geographic and demographic fields like `county`, `population`, and `lat`/`lon` that are not present in the list view. Both list and detail responses also carry `geoid` — the jurisdiction's Census GEOID (FIPS code) — which can be `null` for AHJs without a mapped geography (such as utilities).
 
 <Warning>
-  AHJ IDs are integers, not UUIDs. Make sure your integration stores and passes them as integer values.
+  AHJ IDs are integers, not UUIDs. Make sure your integration stores and passes
+  them as integer values.
 </Warning>
+
+## Looking up AHJs by geoID
+
+Every AHJ tied to a U.S. geography carries a `geoid` — its **Census GEOID** (a FIPS-based identifier). County geoIDs are 5 characters, Census places are 7, and townships are 10. If you already work with Census or TIGER/Line data, the `geoid` lets you cross-reference Fordje AHJs without ever touching Fordje's internal integer IDs.
+
+Don't have a GEOID handy? Look one up by address or place name with the [U.S. Census Bureau Geocoder](https://geocoding.geo.census.gov/geocoder/) or browse the [TIGER/Line GEOID reference](https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html). You can also get an AHJ's `geoid` directly from any `/v1/ahjs` or `/v1/ahjs/{id}` response.
+
+<Warning>
+  GeoIDs are **case-sensitive strings with significant leading zeros**. `06001`
+  (Alameda County, CA) is not the same as `6001`. Always store and pass them as
+  strings — never as integers — or the leading zeros will be lost and the lookup
+  will fail.
+</Warning>
+
+### Resolve a geoID to an AHJ
+
+Pass the geoID on the `/v1/geoid/{geoid}` path. The response is identical to `GET /v1/ahjs/{ahj_id}` — full AHJ detail, including the `geoid` itself.
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET "https://connect.fordje.com/v1/geoid/0644000" \
+  -H "X-API-Key: your-api-key"
+```
+
+```python Python
+import requests
+
+resp = requests.get(
+    "https://connect.fordje.com/v1/geoid/0644000",  # string — keep the leading zero
+    headers={"X-API-Key": "your-api-key"},
+)
+resp.raise_for_status()
+ahj = resp.json()["data"]
+print(ahj["id"], ahj["name"], ahj["geoid"])
+```
+
+```javascript JavaScript
+// Keep the geoID a string — do NOT parseInt() it, or "0644000" becomes 644000.
+const geoid = "0644000";
+const resp = await fetch(`https://connect.fordje.com/v1/geoid/${geoid}`, {
+  headers: { "X-API-Key": "your-api-key" },
+});
+const { data } = await resp.json();
+console.log(data.id, data.name, data.geoid);
+```
+
+  </CodeGroup>
+
+```json
+{
+  "response_type": "success",
+  "description": "AHJ 1 detail",
+  "data": {
+    "id": 1,
+    "name": "City of Los Angeles",
+    "type": "city",
+    "state_code": "CA",
+    "state_name": "California",
+    "county": "Los Angeles",
+    "population": 3979576,
+    "lat": 34.0522,
+    "lon": -118.2437,
+    "geoid": "0644000"
+  }
+}
+```
+
+### Resolution semantics
+
+| Situation                                          | Result                     |
+| -------------------------------------------------- | -------------------------- |
+| geoID resolves to an AHJ in your subscription      | `200` with full AHJ detail |
+| geoID is unknown (or maps only to a hidden AHJ)    | `404 Not found`            |
+| geoID resolves to an AHJ outside your subscription | `403 AHJ_ACCESS_DENIED`    |
+
+<Note>
+  A geoID is intended to be 1:1 with an AHJ. In the rare case the same geoID
+  maps to more than one AHJ, the API returns the lowest-numbered AHJ ID.
+</Note>
+
+You can also run a saved collection against a single geoID — see [running a collection for one geoID](/concepts/collections#run-a-collection-for-a-single-geoid).
 
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="List AHJs" icon="list" href="/api-reference/endpoint/list_ahjs">
-    Full API reference for `GET /v1/ahjs` — query parameters, response fields, and filtering.
+    Full API reference for `GET /v1/ahjs` — query parameters, response fields,
+    and filtering.
   </Card>
-  <Card title="Get AHJ detail" icon="magnifying-glass" href="/api-reference/endpoint/get_ahj">
-    Full API reference for `GET /v1/ahjs/{ahj_id}` — all response fields including geographic data.
+  <Card
+    title="Get AHJ detail"
+    icon="magnifying-glass"
+    href="/api-reference/endpoint/get_ahj"
+  >
+    Full API reference for `GET /v1/ahjs/{ahj_id}` — all response fields
+    including geographic data.
   </Card>
 </CardGroup>

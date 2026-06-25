@@ -23,7 +23,10 @@ Collections follow a define-once, run-anywhere pattern:
 3. **Optionally export as CSV.** If your downstream tools (spreadsheets, project management systems, compliance trackers) need a flat file, you can export the collection results as CSV directly from the API.
 
 <Info>
-  Collections are scoped to your organization. You can only see and execute collections that belong to your org, and results are further filtered to AHJs in your subscription. See [AHJ access control](/concepts/ahjs#access-scoping) for details.
+  Collections are scoped to your organization. You can only see and execute
+  collections that belong to your org, and results are further filtered to AHJs
+  in your subscription. See [AHJ access control](/concepts/ahjs#access-scoping)
+  for details.
 </Info>
 
 ## When to use collections vs ad-hoc queries
@@ -31,17 +34,22 @@ Collections follow a define-once, run-anywhere pattern:
 Both approaches give you access to the same underlying data. The difference is in how you specify what you want.
 
 **Use collections when:**
+
 - You pull the same set of data points regularly — every new project needs the same permit data, every quarterly audit checks the same compliance fields
 - Multiple team members or systems need to run the same query — the collection acts as a shared definition
 - You want to keep your API calls consistent and avoid drift between integrations
 
 **Use ad-hoc queries when:**
+
 - You are doing exploratory work — browsing what data is available for a new jurisdiction
 - You need a one-off lookup that does not fit an existing collection
 - You are prototyping and the set of data points you need is still changing
 
 <Tip>
-  Start with ad-hoc queries on `GET /v1/data-points` to explore what is available. Once you know which data point types and categories you need repeatedly, create a collection in the Fordje platform and switch your integration to use it.
+  Start with ad-hoc queries on `GET /v1/data-points` to explore what is
+  available. Once you know which data point types and categories you need
+  repeatedly, create a collection in the Fordje platform and switch your
+  integration to use it.
 </Tip>
 
 ## Working with collections
@@ -151,6 +159,56 @@ curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-e
 
 The response contains the matching published data point values, each tied to its AHJ and data point type. If any of the AHJ IDs you pass are outside your subscription, you will still get results for the ones you have access to, with a `warnings` array listing the excluded IDs.
 
+#### Target by geoID instead of AHJ IDs
+
+`ahj_ids` is optional. As an alternative, pass `geoids` — a comma-separated list of Census GEOIDs — and the API resolves them to AHJs for you. Provide **exactly one** of `ahj_ids` or `geoids`:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/data?geoids=17031,06001&page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+<Warning>
+  GeoIDs are case-sensitive strings with significant leading zeros (`06001`, not
+  `6001`). Send them as-is — do not strip leading zeros.
+</Warning>
+
+Rules:
+
+| Request                                          | Result                                                                              |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Both `ahj_ids` and `geoids` provided             | `422` validation error ("Provide either ahj_ids or geoids, not both")               |
+| Neither provided                                 | `422` validation error ("Provide either ahj_ids or geoids")                         |
+| `geoids` provided but **none** resolve to an AHJ | `422` validation error ("No AHJs matched these geoids")                             |
+| Some `geoids` resolve, some do not               | `200` with results for the matched ones, plus a warning carrying `unmatched_geoids` |
+
+When some geoIDs fail to resolve, the response stays `200` and reports them in the `warnings` array alongside any access exclusions:
+
+```json
+{
+  "response_type": "success",
+  "data": { "items": ["..."], "pagination": { "...": "..." } },
+  "warnings": [
+    {
+      "code": "GEOID_UNMATCHED",
+      "message": "Some geoIDs did not resolve to an AHJ",
+      "unmatched_geoids": ["9999999"]
+    }
+  ]
+}
+```
+
+#### Run a collection for a single geoID
+
+To run a collection against one jurisdiction by geoID, use the `/v1/geoid/{geoid}` namespace. The response shape is identical to `GET /v1/collections/{id}/data`, scoped to that single AHJ, and it inherits the `page`/`page_size` params:
+
+```bash
+curl -X GET "https://connect.fordje.com/v1/geoid/17031/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890?page_size=10" \
+  -H "X-API-Key: your-api-key"
+```
+
+An unknown geoID returns `404`; a resolved AHJ outside your subscription returns `403`.
+
 ### Export as CSV
 
 For workflows that need flat files, you can export a collection's results directly as CSV:
@@ -164,16 +222,42 @@ curl -X POST "https://connect.fordje.com/v1/collections/a1b2c3d4-e5f6-7890-abcd-
 The response is a CSV file with a `Content-Type: text/csv` header. The filename in the `Content-Disposition` header is based on the collection name, so saving with `-o` gives you a clean local file for import into spreadsheets or other tools.
 
 <Tip>
-  CSV exports apply the same AHJ access controls as the data endpoint. You only get data for jurisdictions in your subscription.
+  CSV exports apply the same AHJ access controls as the data endpoint. You only
+  get data for jurisdictions in your subscription.
 </Tip>
+
+CSV export accepts the same `geoids` alternative to `ahj_ids` (exactly one of the two), and a single-geoID export is available under the geoID namespace:
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/geoid/17031/collections/a1b2c3d4-e5f6-7890-abcd-ef1234567890/export" \
+  -H "X-API-Key: your-api-key" \
+  -o permitting_requirements_cook_county.csv
+```
+
+<Note>
+  CSV export does not return a JSON body, so it cannot surface partial warnings
+  — geoIDs that do not resolve are silently skipped. If **every** supplied geoID
+  fails to resolve, the export fails with `422` instead. To see exactly which
+  geoIDs resolved, call the `/data` endpoint first.
+</Note>
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="List collections" icon="folder" href="/api-reference/endpoint/list_collections">
-    Full API reference for `GET /v1/collections` — list your organization's saved collections.
+  <Card
+    title="List collections"
+    icon="folder"
+    href="/api-reference/endpoint/list_collections"
+  >
+    Full API reference for `GET /v1/collections` — list your organization's
+    saved collections.
   </Card>
-  <Card title="Execute a collection" icon="play" href="/api-reference/endpoint/get_collection_data">
-    Full API reference for `GET /v1/collections/{id}/data` — run a collection against AHJs.
+  <Card
+    title="Execute a collection"
+    icon="play"
+    href="/api-reference/endpoint/get_collection_data"
+  >
+    Full API reference for `GET /v1/collections/{id}/data` — run a collection
+    against AHJs.
   </Card>
 </CardGroup>
