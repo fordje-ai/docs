@@ -18,7 +18,10 @@ Reports are built for scenarios where comparison is the point:
 - **Compliance comparison.** Your engineering team needs to understand how building codes differ between jurisdictions for a specific regulatory area. Compare insulation R-values, fire sprinkler thresholds, or permit requirements across every county in a state to identify where your standard designs need modification.
 
 <Tip>
-  If you find yourself running the same comparison repeatedly with the same set of data point types, consider creating a [collection](/concepts/collections) instead. Collections save the data point type configuration so you only need to pass AHJ IDs each time.
+  If you find yourself running the same comparison repeatedly with the same set
+  of data point types, consider creating a [collection](/concepts/collections)
+  instead. Collections save the data point type configuration so you only need
+  to pass AHJ IDs each time.
 </Tip>
 
 ## The matrix format
@@ -53,7 +56,7 @@ curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
     ],
     "rows": [
       {
-        "ahj": { "id": 1, "name": "City of Los Angeles" },
+        "ahj": { "id": 1, "name": "City of Los Angeles", "geoid": "0644000" },
         "values": {
           "10": {
             "value": "Yes",
@@ -65,7 +68,7 @@ curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
         }
       },
       {
-        "ahj": { "id": 2, "name": "City of Houston" },
+        "ahj": { "id": 2, "name": "City of Houston", "geoid": "4835000" },
         "values": {
           "10": { "value": "Yes" },
           "20": { "value": "Biannual" },
@@ -80,7 +83,9 @@ curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
 In this example, data point type `10` might be "Permit Required", `20` might be "Inspection Frequency", and `30` might be "Permit Fee". You can look up the human-readable names for any data point type ID using `GET /v1/data-points/types`. See the [data points concept page](/concepts/data-points) for more on types and values.
 
 <Info>
-  If a jurisdiction does not have a value for a particular data point type, that cell is returned as `null`. Your code should handle `null` cells rather than assuming every data point type has a value for every AHJ.
+  If a jurisdiction does not have a value for a particular data point type, that
+  cell is returned as `null`. Your code should handle `null` cells rather than
+  assuming every data point type has a value for every AHJ.
 </Info>
 
 ## CSV export
@@ -101,7 +106,10 @@ curl -X POST "https://connect.fordje.com/v1/reports/export" \
 The response is a CSV file with a `Content-Type: text/csv` header. The `-o` flag saves it directly to a local file. The CSV contains the same data as the matrix response, flattened into rows and columns suitable for import into any spreadsheet application.
 
 <Tip>
-  CSV exports are a good fit for distributing requirement summaries to team members who do not interact with the API directly. Generate the report programmatically on a schedule and share the file through your existing project management tools.
+  CSV exports are a good fit for distributing requirement summaries to team
+  members who do not interact with the API directly. Generate the report
+  programmatically on a schedule and share the file through your existing
+  project management tools.
 </Tip>
 
 ## AHJ access control
@@ -136,10 +144,20 @@ See the [AHJs concept page](/concepts/ahjs) for full details on how access scopi
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Matrix report" icon="table-cells" href="/api-reference/endpoint/create_matrix_report">
-    Full API reference for `POST /v1/reports/matrix` — request schema and response format.
+  <Card
+    title="Matrix report"
+    icon="table-cells"
+    href="/api-reference/endpoint/create_matrix_report"
+  >
+    Full API reference for `POST /v1/reports/matrix` — request schema and
+    response format.
   </Card>
-  <Card title="CSV export" icon="file-csv" href="/api-reference/endpoint/export_report">
-    Full API reference for `POST /v1/reports/export` — export comparisons as downloadable CSV.
+  <Card
+    title="CSV export"
+    icon="file-csv"
+    href="/api-reference/endpoint/export_report"
+  >
+    Full API reference for `POST /v1/reports/export` — export comparisons as
+    downloadable CSV.
   </Card>
 </CardGroup>
