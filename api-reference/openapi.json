@@ -459,7 +459,8 @@
                           "id": 42,
                           "name": "City of Austin",
                           "type": "city",
-                          "state_code": "TX"
+                          "state_code": "TX",
+                          "geoid": "4805000"
                         },
                         "data_point_type": {
                           "id": 10,
