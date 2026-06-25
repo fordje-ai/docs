@@ -420,6 +420,158 @@
         }
       }
     },
+    "/v1/geoid/{geoid}/collections/{collection_id}": {
+      "get": {
+        "tags": ["GeoID"],
+        "summary": "Run collection for a geoID",
+        "description": "Resolve the geoID to its AHJ, enforce access, and execute the collection against that single AHJ. Same response shape as GET /v1/collections/{collection_id}/data. Unknown geoID returns 404; a resolved AHJ outside your subscription returns 403.",
+        "operationId": "run_collection_for_geoid",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "geoid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Census GEOID (string, leading zeros significant)",
+              "examples": ["4805000"],
+              "title": "Geoid"
+            }
+          },
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Items per page (max 500)",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Items per page (max 500)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection executed for the geoID's AHJ",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BaseResponse" },
+                "example": {
+                  "response_type": "success",
+                  "description": "Collection 'Permitting Requirements' executed: 3 result(s)",
+                  "data": {
+                    "collection_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "collection_name": "Permitting Requirements",
+                    "items": [
+                      {
+                        "id": 1001,
+                        "ahj": {
+                          "id": 42,
+                          "name": "City of Austin",
+                          "geoid": "4805000"
+                        },
+                        "data_point_type": {
+                          "id": 10,
+                          "name": "Permit Required",
+                          "unit_of_measure": "boolean",
+                          "category_ids": [53]
+                        },
+                        "value": "Yes",
+                        "reference": "Austin Municipal Code",
+                        "section": "25-1-21",
+                        "updated_at": "2026-03-14T10:24:00Z"
+                      }
+                    ],
+                    "pagination": {
+                      "page": 1,
+                      "page_size": 100,
+                      "total": 3,
+                      "total_pages": 1
+                    }
+                  },
+                  "warnings": null
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "AHJ access denied",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Collection not found, or no AHJ matches this geoID",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "502": {
+            "description": "Backend service unavailable",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/data-points": {
       "get": {
         "tags": ["Data Points"],
