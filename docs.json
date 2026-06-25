@@ -22,12 +22,7 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "authentication",
-              "support"
-            ]
+            "pages": ["index", "quickstart", "authentication", "support"]
           },
           {
             "group": "Core concepts",
@@ -43,9 +38,7 @@
           },
           {
             "group": "Guides",
-            "pages": [
-              "guides/pagination"
-            ]
+            "pages": ["guides/pagination"]
           }
         ]
       },
@@ -54,41 +47,36 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           },
           {
             "group": "AHJs",
             "openapi": "api-reference/openapi.json",
+            "pages": ["GET /v1/ahjs", "GET /v1/ahjs/{ahj_id}"]
+          },
+          {
+            "group": "GeoID",
+            "openapi": "api-reference/openapi.json",
             "pages": [
-              "GET /v1/ahjs",
-              "GET /v1/ahjs/{ahj_id}"
+              "GET /v1/geoid/{geoid}",
+              "GET /v1/geoid/{geoid}/collections/{collection_id}",
+              "POST /v1/geoid/{geoid}/collections/{collection_id}/export"
             ]
           },
           {
             "group": "Data Points",
             "openapi": "api-reference/openapi.json",
-            "pages": [
-              "GET /v1/data-points",
-              "GET /v1/data-points/types"
-            ]
+            "pages": ["GET /v1/data-points", "GET /v1/data-points/types"]
           },
           {
             "group": "Reference Data",
             "openapi": "api-reference/openapi.json",
-            "pages": [
-              "GET /v1/categories",
-              "GET /v1/units-of-measure"
-            ]
+            "pages": ["GET /v1/categories", "GET /v1/units-of-measure"]
           },
           {
             "group": "Reports",
             "openapi": "api-reference/openapi.json",
-            "pages": [
-              "POST /v1/reports/matrix",
-              "POST /v1/reports/export"
-            ]
+            "pages": ["POST /v1/reports/matrix", "POST /v1/reports/export"]
           },
           {
             "group": "Collections",
@@ -103,9 +91,7 @@
           {
             "group": "Utility",
             "openapi": "api-reference/openapi.json",
-            "pages": [
-              "GET /health"
-            ]
+            "pages": ["GET /health"]
           }
         ]
       },
@@ -114,11 +100,7 @@
         "groups": [
           {
             "group": "Resources",
-            "pages": [
-              "changelog",
-              "versioning",
-              "faq"
-            ]
+            "pages": ["changelog", "versioning", "faq"]
           },
           {
             "group": "Legal",
