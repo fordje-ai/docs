@@ -29,6 +29,7 @@
             "pages": [
               "concepts/ahjs",
               "concepts/data-points",
+              "concepts/standard-solar-data-point-types",
               "concepts/collections",
               "concepts/reports",
               "concepts/categories",
