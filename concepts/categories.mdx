@@ -11,17 +11,18 @@ When you are building an integration around permitting workflows, you do not nee
 
 Each category contains data point types that relate to that regulatory topic. Here are some examples:
 
-| Category | Example data points |
-|----------|---------------------|
-| **Permitting** | Permit application requirements, fee schedules, turnaround times |
-| **Inspections** | Inspection frequency, required inspection types, scheduling rules |
-| **Building Standards** | Minimum insulation R-value, fire sprinkler requirements, structural load requirements |
-| **Zoning & Land Use** | Setback requirements, lot coverage limits, height restrictions |
-| **Licensing & Contractor Requirements** | Contractor license requirements, bonding requirements, insurance minimums |
-| **HVAC & Mechanical** | HVAC permit requirements, duct insulation standards, equipment efficiency minimums |
+| Category                                | Example data points                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Permitting**                          | Permit application requirements, fee schedules, turnaround times                      |
+| **Inspections**                         | Inspection frequency, required inspection types, scheduling rules                     |
+| **Building Standards**                  | Minimum insulation R-value, fire sprinkler requirements, structural load requirements |
+| **Zoning & Land Use**                   | Setback requirements, lot coverage limits, height restrictions                        |
+| **Licensing & Contractor Requirements** | Contractor license requirements, bonding requirements, insurance minimums             |
+| **HVAC & Mechanical**                   | HVAC permit requirements, duct insulation standards, equipment efficiency minimums    |
 
 <Info>
-  This list is not exhaustive. Use the `GET /v1/categories` endpoint to retrieve the full, up-to-date list of categories programmatically.
+  This list is not exhaustive. Use the `GET /v1/categories` endpoint to retrieve
+  the full, up-to-date list of categories programmatically.
 </Info>
 
 Note that some data point types appear in more than one category. Fire sprinkler requirements, for example, are relevant to both Building Standards and Inspections.
@@ -33,7 +34,9 @@ Categories solve a practical problem: the Fordje platform tracks a large number 
 By passing `category_ids` when you query data points, you tell the API to return only the data points that belong to those topics. This keeps your responses smaller, your parsing simpler, and your application focused on the requirements that actually matter for the work at hand.
 
 <Tip>
-  If you know the exact questions you need, filter by `data_point_type_ids` instead. Categories are best when you want everything within a topic without having to enumerate individual types.
+  If you know the exact questions you need, filter by `data_point_type_ids`
+  instead. Categories are best when you want everything within a topic without
+  having to enumerate individual types.
 </Tip>
 
 ## Listing categories
@@ -140,16 +143,24 @@ When you create a [collection](/concepts/collections) in the Fordje platform, yo
 This is useful when your team repeatedly needs the same set of categories across different projects. Instead of passing `category_ids` in every API call, you define the categories once in a collection and execute it against whatever AHJs you need.
 
 <Tip>
-  Collections can combine category IDs with specific data point type IDs for even more precise filtering. See the [collections concept page](/concepts/collections) for the full workflow.
+  Collections can combine category IDs with specific data point type IDs for
+  even more precise filtering. See the [collections concept
+  page](/concepts/collections) for the full workflow.
 </Tip>
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="List categories" icon="layer-group" href="/api-reference/endpoint/list_categories">
-    Full API reference for `GET /v1/categories` — query parameters and pagination.
+  <Card
+    title="List categories"
+    icon="layer-group"
+    href="/api-reference/reference-data/list-categories"
+  >
+    Full API reference for `GET /v1/categories` — query parameters and
+    pagination.
   </Card>
   <Card title="Data points" icon="database" href="/concepts/data-points">
-    Learn more about the data points that categories organize, including types, values, and filtering.
+    Learn more about the data points that categories organize, including types,
+    values, and filtering.
   </Card>
 </CardGroup>
