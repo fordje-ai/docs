@@ -1239,8 +1239,8 @@
                       },
                       {
                         "id": 12,
-                        "name": "boolean",
-                        "abbreviation": null
+                        "name": "square feet",
+                        "abbreviation": "sq ft"
                       }
                     ],
                     "pagination": {
@@ -1311,7 +1311,7 @@
       "post": {
         "tags": ["Reports"],
         "summary": "Generate matrix comparison report",
-        "description": "Generate a comparison matrix with AHJs as rows and data point types as columns. Only AHJs your organization has access to are included. Unauthorized AHJs are excluded with a warning.",
+        "description": "Generate a comparison matrix with AHJs as rows and data point types as columns. Only AHJs your organization has access to are included. Unauthorized AHJs are excluded with a warning. A cell is null when the AHJ has no value for that data point type; `reference` and `section` are null when no citation is recorded.",
         "operationId": "generate_report_matrix",
         "requestBody": {
           "content": {
@@ -1396,8 +1396,8 @@
                           },
                           "12": {
                             "value": "10 business days",
-                            "reference": null,
-                            "section": null
+                            "reference": "Austin Development Services",
+                            "section": "Residential Review SLA"
                           }
                         }
                       },
@@ -1417,10 +1417,14 @@
                           },
                           "11": {
                             "value": "$125.00",
-                            "reference": null,
-                            "section": null
+                            "reference": "Travis County Fee Schedule",
+                            "section": "Sec. 3.1"
                           },
-                          "12": null
+                          "12": {
+                            "value": "15 business days",
+                            "reference": "Travis County Development Regulations",
+                            "section": "Ch. 482.4"
+                          }
                         }
                       }
                     ]
