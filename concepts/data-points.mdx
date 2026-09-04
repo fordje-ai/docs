@@ -62,7 +62,9 @@ When you query `GET /v1/data-points`, each item in the response includes both th
 <Info>
   You can browse all available data point types with `GET /v1/data-points/types`
   without needing to specify any AHJ. This is useful for discovering what
-  questions Fordje tracks before querying specific jurisdictions.
+  questions Fordje tracks before querying specific jurisdictions. For a curated
+  starting point, see the [standard solar data point
+  types](/concepts/standard-solar-data-point-types).
 </Info>
 
 ## Units of measure
@@ -210,7 +212,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
   <Card
     title="Query data points"
     icon="database"
-    href="/api-reference/endpoint/list_data_points"
+    href="/api-reference/data-points/list-data-point-values"
   >
     Full API reference for `GET /v1/data-points` — all filters, response fields,
     and pagination.
@@ -218,7 +220,7 @@ curl -X GET "https://connect.fordje.com/v1/data-points/types?page_size=5" \
   <Card
     title="Browse data point types"
     icon="tags"
-    href="/api-reference/endpoint/list_data_point_types"
+    href="/api-reference/data-points/list-data-point-types"
   >
     Full API reference for `GET /v1/data-points/types` — the global catalog of
     questions Fordje tracks.

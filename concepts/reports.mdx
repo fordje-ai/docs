@@ -80,7 +80,7 @@ curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
 }
 ```
 
-In this example, data point type `10` might be "Permit Required", `20` might be "Inspection Frequency", and `30` might be "Permit Fee". You can look up the human-readable names for any data point type ID using `GET /v1/data-points/types`. See the [data points concept page](/concepts/data-points) for more on types and values.
+In this example, data point type `10` might be "Permit Required", `20` might be "Inspection Frequency", and `30` might be "Permit Fee". You can look up the human-readable names for any data point type ID using `GET /v1/data-points/types`. See the [data points concept page](/concepts/data-points) for more on types and values, or use the copy-ready ID arrays in the [standard solar data point types](/concepts/standard-solar-data-point-types).
 
 <Info>
   If a jurisdiction does not have a value for a particular data point type, that
@@ -147,7 +147,7 @@ See the [AHJs concept page](/concepts/ahjs) for full details on how access scopi
   <Card
     title="Matrix report"
     icon="table-cells"
-    href="/api-reference/endpoint/create_matrix_report"
+    href="/api-reference/reports/generate-matrix-comparison-report"
   >
     Full API reference for `POST /v1/reports/matrix` — request schema and
     response format.
@@ -155,7 +155,7 @@ See the [AHJs concept page](/concepts/ahjs) for full details on how access scopi
   <Card
     title="CSV export"
     icon="file-csv"
-    href="/api-reference/endpoint/export_report"
+    href="/api-reference/reports/export-report-as-csv"
   >
     Full API reference for `POST /v1/reports/export` — export comparisons as
     downloadable CSV.

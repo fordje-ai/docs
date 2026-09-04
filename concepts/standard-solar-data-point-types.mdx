@@ -1,0 +1,190 @@
+---
+title: "Standard solar data point types"
+description: "Standard data point types for Residential Solar and C&I Solar"
+---
+
+A data point type is a regulatory question that Fordje asks consistently across jurisdictions. The value is the answer for a specific Authority Having Jurisdiction (AHJ). For example, `Permitting - Solar Permit Cost (Residential)` is a data point type, while a jurisdiction's published permit fee is its value.
+
+The sets below are the standard data point types Fordje recommends for Residential Solar and C&I Solar. Use the IDs with `data_point_type_ids` when you [query data points](/concepts/data-points) or [generate a report](/concepts/reports).
+
+<Info>
+  These curated sets are not the complete data point type catalog. They also do
+  not guarantee that every AHJ has a published value for every type. Use `GET
+  /v1/data-points/types` to retrieve the complete current catalog. See the [API
+  reference overview](/api-reference/introduction#data-points) for the endpoint.
+</Info>
+
+Production IDs and names on this page were verified on August 25, 2026.
+
+## Residential Solar
+
+These are the standard data point types for residential solar projects.
+
+|    ID | Data point type                                                        | Description                                                                                    |
+| ----: | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+|  `29` | Code Cycle - Building Code Edition                                     | Building code adoption and cycle.                                                              |
+|  `33` | Code Cycle - Electrical Code Edition                                   | Electrical code adoption and cycle.                                                            |
+|  `35` | Code Cycle - Fire Code Edition                                         | Fire code adoption and cycle.                                                                  |
+|  `34` | Code Cycle - Residential Code Edition                                  | Residential code adoption and cycle.                                                           |
+| `166` | Contact - Building Department Address                                  | Physical address and phone number for the building department.                                 |
+| `167` | Contact - Building Department Hours of Operation                       | Building department weekday hours of operation.                                                |
+| `164` | Contact - Building Department Official                                 | Building department contact name, email address, and phone number.                             |
+| `443` | Contact - Electrical Inspection Phone                                  | Electrical inspection department main phone line.                                              |
+| `444` | Contact - Fire Department Phone                                        | Fire inspection department main phone line.                                                    |
+| `337` | Contact - Inspection Department Officials                              | Inspection department contact names, coverage areas, email addresses, and phone numbers.       |
+| `442` | Contact - Permit Department Phone                                      | Permitting department main phone line.                                                         |
+| `165` | Contact - Planning Department Official                                 | Planning department contact name, email address, and phone number.                             |
+| `596` | Design - BESS Aggregate kWh Limit (Residential)                        | Aggregate battery energy storage system capacity limits for indoor and exterior installations. |
+| `178` | Design - Placard Requirements (Residential)                            | Utility placard requirements for residential solar installations.                              |
+| `122` | Design - Production Meter Required (Residential)                       | Whether the utility requires a PV production meter.                                            |
+| `123` | Design - Production Meter Requirements (Residential)                   | Criteria and requirements for a PV production meter.                                           |
+|  `69` | Design - Solar AC Disconnecting Means Location (Residential)           | Required location of the AC disconnect, when one is required.                                  |
+|  `68` | Design - Solar AC Disconnecting Means Required (Residential)           | AC disconnect requirements set by the jurisdiction or utility.                                 |
+| `448` | Design - Solar Rapid Shut Down Visibility (Residential)                | Street visibility requirements for rapid shutdown equipment.                                   |
+|  `49` | Design - Solar Rooftop Fire Access Pathways (Residential)              | Rooftop fire access pathway and egress requirements, including exceptions.                     |
+| `119` | Design - Solar Supply Side Connections Allowed (Residential)           | Whether a supply-side connection is allowed as the point of interconnection.                   |
+|  `71` | Design - Solar Utility Meter Collars Allowed (Residential)             | Whether a meter collar is allowed as the point of interconnection.                             |
+|   `3` | Engineering - Ground Snow Load                                         | Local ground snow load rating.                                                                 |
+|   `5` | Engineering - Wind Speed                                               | Local design wind speed in miles per hour.                                                     |
+| `483` | Inspections - Electrical Inspection Method                             | Whether on-site or remote electrical inspections are allowed.                                  |
+| `640` | Inspections - Electrical Inspection Scheduling Method                  | Available methods for scheduling an electrical inspection.                                     |
+| `632` | Inspections - Solar Inspection wait time (business days) (Residential) | Typical stated wait time for a residential solar inspection.                                   |
+| `434` | Inspections - Solar Smoke Detector Attestation (Residential)           | Smoke detector attestation requirements during inspection.                                     |
+| `563` | Interconnection - Application Cost                                     | Interconnection application cost for each application tier.                                    |
+| `562` | Interconnection - Application Level                                    | Nameplate capacity limits for each interconnection tier.                                       |
+|  `74` | Interconnection - Excess Energy Export Credits                         | Energy credit per kWh for excess site-generated energy exported to the grid.                   |
+| `117` | Interconnection - Line Diagram Submittal Guidelines (Residential)      | Line diagram requirements for an interconnection application.                                  |
+| `118` | Interconnection - Site Plan Submittal Guidelines (Residential)         | Site plan requirements for an interconnection application.                                     |
+| `121` | Interconnection - Submittal Documents (Residential)                    | Documents required for a residential interconnection application.                              |
+| `433` | Licensing - Business License Expiration Timeline                       | Renewal timeline for business licenses.                                                        |
+| `432` | Licensing - Business License Fee                                       | Fees for a new business license.                                                               |
+| `439` | Licensing - Business License Portal                                    | Business license application or renewal URL.                                                   |
+| `440` | Licensing - Business License Renewal Date                              | Recurring license renewal date, when different from the date of issuance.                      |
+| `257` | Licensing - Solar Contractor Licensing (Residential)                   | State contractor license and local business license requirements.                              |
+| `258` | Permitting - Building Permit Expiration (months)                       | Building permit expiration timeline from the approval date.                                    |
+| `259` | Permitting - Building Permit Extension (months)                        | Building permit extension timeline from the approval date.                                     |
+| `644` | Permitting - Building Permit Submittal Method, Solar (Residential)     | Available methods for submitting a residential solar building permit.                          |
+| `177` | Permitting - File Specifications and Naming Conventions                | File format and naming requirements for a permit submittal.                                    |
+| `441` | Permitting - Permit Portal                                             | Permit submittal URL.                                                                          |
+| `173` | Permitting - Solar Electrical Plan (Residential)                       | Electrical plan requirements for a solar permit submittal.                                     |
+|  `67` | Permitting - Solar Expedited Permitting                                | Availability, platforms, and requirements for expedited solar and energy storage permitting.   |
+|  `19` | Permitting - Solar Permit Cost (Residential)                           | Cost for residential solar and battery energy storage system permits.                          |
+|  `18` | Permitting - Solar Professional Engineering Required (Residential)     | Professional engineering license requirements for a solar permit submittal.                    |
+| `174` | Permitting - Solar Site Plan (Residential)                             | Site plan requirements for a solar permit submittal.                                           |
+| `124` | Permitting - Solar Structural Plan (Residential)                       | Roof framing plan requirements for a solar permit submittal.                                   |
+|  `55` | Permitting - Solar Submittal Guidelines (Residential)                  | Guidelines for submitting residential solar plan sets.                                         |
+|  `20` | Sales - Solar Max AC System Size (Residential)                         | Maximum AC system size for a residential solar installation.                                   |
+|  `73` | Sales - Solar Max DC System Size (Residential)                         | Maximum DC system size for a residential solar installation.                                   |
+
+<Accordion title="Copy the Residential Solar data point type IDs">
+
+```json
+[
+  29, 33, 35, 34, 166, 167, 164, 443, 444, 337, 442, 165, 596, 178, 122, 123,
+  69, 68, 448, 49, 119, 71, 3, 5, 483, 640, 632, 434, 563, 562, 74, 117, 118,
+  121, 433, 432, 439, 440, 257, 258, 259, 644, 177, 441, 173, 67, 19, 18, 174,
+  124, 55, 20, 73
+]
+```
+
+</Accordion>
+
+## C&I Solar
+
+These are the standard data point types for commercial and industrial solar projects.
+
+|    ID | Data point type                                                                 | Description                                                                                                       |
+| ----: | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `638` | Build - Demolition Requirements (Commercial)                                    | Commercial demolition notification, escrow, reporting, and permitting requirements.                               |
+|  `29` | Code Cycle - Building Code Edition                                              | Building code adoption and cycle.                                                                                 |
+|  `33` | Code Cycle - Electrical Code Edition                                            | Electrical code adoption and cycle.                                                                               |
+|  `35` | Code Cycle - Fire Code Edition                                                  | Fire code adoption and cycle.                                                                                     |
+| `166` | Contact - Building Department Address                                           | Physical address and phone number for the building department.                                                    |
+| `167` | Contact - Building Department Hours of Operation                                | Building department weekday hours of operation.                                                                   |
+| `164` | Contact - Building Department Official                                          | Building department contact name, email address, and phone number.                                                |
+| `443` | Contact - Electrical Inspection Phone                                           | Electrical inspection department main phone line.                                                                 |
+| `444` | Contact - Fire Department Phone                                                 | Fire inspection department main phone line.                                                                       |
+| `337` | Contact - Inspection Department Officials                                       | Inspection department contact names, coverage areas, email addresses, and phone numbers.                          |
+| `442` | Contact - Permit Department Phone                                               | Permitting department main phone line.                                                                            |
+| `165` | Contact - Planning Department Official                                          | Planning department contact name, email address, and phone number.                                                |
+| `557` | Design - BESS Restricted Zones                                                  | Zoning restrictions for battery energy storage systems.                                                           |
+| `558` | Design - BESS Road Setback                                                      | Required battery energy storage system setback from a road.                                                       |
+| `559` | Design - BESS Walkway Setback                                                   | Required battery energy storage system setback from a public walkway, sidewalk, or pedestrian path.               |
+| `256` | Design - Land Disturbance Tree Preservation                                     | Local tree preservation and replacement standards.                                                                |
+| `561` | Design - Non-Residential BESS Setback from Non-Participating Occupied Structure | Required distance from a non-residential battery energy storage system to a non-participating occupied structure. |
+| `560` | Design - Non-Residential BESS Setback from Non-Participating Property Line      | Required distance from a non-residential battery energy storage system to a non-participating property line.      |
+| `522` | Design - Solar Decommissioning Financial Assurance (C&I)                        | Surety bond or escrow requirements for removing equipment at the end of its service life.                         |
+| `523` | Design - Solar Decommissioning Requirements (C&I)                               | Developer requirements for removing equipment during decommissioning.                                             |
+| `521` | Design - Solar Decommissioning Timeline (C&I)                                   | Required timeline for removing installed equipment at the end of its service life.                                |
+| `519` | Design - Solar Property Line Requirements (C&I)                                 | Ground-mounted solar setback requirements from non-participating property lines.                                  |
+| `517` | Design - Solar Property Line Setback Distance (C&I)                             | Required distance from a ground-mounted solar installation to a non-participating property line.                  |
+| `520` | Design - Solar Property Line Variances (C&I)                                    | Available variances from ground-mounted solar property line setback requirements.                                 |
+| `518` | Design - Solar Road Setback (C&I)                                               | Ground-mounted solar setback from the edge of a road right-of-way.                                                |
+| `643` | Design - Solar Rooftop Fire Access Pathways (Commercial)                        | Commercial rooftop fire access pathway and walkway requirements, including exceptions.                            |
+|   `3` | Engineering - Ground Snow Load                                                  | Local ground snow load rating.                                                                                    |
+|   `5` | Engineering - Wind Speed                                                        | Local design wind speed in miles per hour.                                                                        |
+| `115` | Hardware - Energy Storage Requirements                                          | Certification and equipment standards for energy storage systems.                                                 |
+| `116` | Hardware - Solar EGC & GEC Requirements                                         | Equipment and grounding electrode conductor type and size requirements.                                           |
+| `113` | Hardware - Solar Inverter Requirements                                          | Certification and equipment standards for solar inverters.                                                        |
+| `114` | Hardware - Solar Module Requirements                                            | Certification and equipment standards for solar modules.                                                          |
+| `303` | Inspections - Platforms and Availability                                        | Inspection request methods, timelines, and available selections.                                                  |
+| `563` | Interconnection - Application Cost                                              | Interconnection application cost for each application tier.                                                       |
+| `562` | Interconnection - Application Level                                             | Nameplate capacity limits for each interconnection tier.                                                          |
+| `639` | Interconnection - Application Review Timeline                                   | Review timeline for each interconnection application tier.                                                        |
+|  `74` | Interconnection - Excess Energy Export Credits                                  | Energy credit per kWh for excess site-generated energy exported to the grid.                                      |
+| `634` | Interconnection - Line Diagram Submittal Guidelines (Commercial)                | Line diagram requirements for a commercial interconnection application.                                           |
+| `637` | Interconnection - Submittal Documents (Commercial)                              | Documents required for a commercial interconnection application.                                                  |
+| `258` | Permitting - Building Permit Expiration (months)                                | Building permit expiration timeline from the approval date.                                                       |
+| `259` | Permitting - Building Permit Extension (months)                                 | Building permit extension timeline from the approval date.                                                        |
+| `347` | Permitting - Drawing Standards (Commercial)                                     | Technical and formatting requirements for commercial construction drawings.                                       |
+| `177` | Permitting - File Specifications and Naming Conventions                         | File format and naming requirements for a permit submittal.                                                       |
+| `441` | Permitting - Permit Portal                                                      | Permit submittal URL.                                                                                             |
+| `431` | Permitting - Stormwater Management Checklist                                    | Engineering checklist for a stormwater management report.                                                         |
+| `556` | Zoning - Available Zone Designations                                            | Zone designations available within the jurisdiction.                                                              |
+
+<Accordion title="Copy the C&I Solar data point type IDs">
+
+```json
+[
+  638, 29, 33, 35, 166, 167, 164, 443, 444, 337, 442, 165, 557, 558, 559, 256,
+  561, 560, 522, 523, 521, 519, 517, 520, 518, 643, 3, 5, 115, 116, 113, 114,
+  303, 563, 562, 639, 74, 634, 637, 258, 259, 347, 177, 441, 431, 556
+]
+```
+
+</Accordion>
+
+## Use the IDs in a report
+
+Pass one of the arrays above as `data_point_type_ids` when you generate a matrix report. This abbreviated example uses three Residential Solar types:
+
+```bash
+curl -X POST "https://connect.fordje.com/v1/reports/matrix" \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ahj_ids": [101, 205],
+    "data_point_type_ids": [33, 49, 19]
+  }'
+```
+
+<Note>
+  If an AHJ does not have a published value for a requested type, its matrix
+  cell is returned as `null`. Handle `null` values when you process report
+  results.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Understand data points"
+    icon="database"
+    href="/concepts/data-points"
+  >
+    Learn how data point types, values, units, categories, and filters work.
+  </Card>
+  <Card title="Generate reports" icon="table-cells" href="/concepts/reports">
+    Compare the selected data point types across multiple AHJs.
+  </Card>
+</CardGroup>
